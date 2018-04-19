@@ -1,0 +1,20 @@
+name: runelite
+image: ubuntu/xenial
+
+users:
+  - name: btw
+    shell: /bin/bash
+
+shell:
+  user: btw
+
+shares:
+  - source: .
+    dest: /home/btw/runelite-paranoid
+
+x11:
+  enabled: yes
+
+provisioning:
+  - type: ansible
+    playbook: playbook.yml

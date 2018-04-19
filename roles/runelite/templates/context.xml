@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+
+<Resource name="jdbc/runelite" auth="Container" type="javax.sql.DataSource"
+        maxActive="50" maxIdle="30" maxWait="10000"
+        username="runelite" password="{{ mysql_pw }}"
+        driverClassName="com.mysql.jdbc.Driver"
+        url="jdbc:mysql://localhost:3306/runelite?relaxAutoCommit=true"
+        testOnBorrow="true"
+        validationQuery="/* ping */"
+/>
+
+<Resource name="jdbc/runelite-cache2" auth="Container" type="javax.sql.DataSource"
+        maxActive="50" maxIdle="30" maxWait="10000"
+        username="runelite" password="{{ mysql_pw }}"
+        driverClassName="com.mysql.jdbc.Driver"
+        url="jdbc:mysql://localhost:3306/runelite-cache2?relaxAutoCommit=true"
+        testOnBorrow="true"
+        validationQuery="/* ping */"
+/>
+
+<Resource name="jdbc/runelite-tracker" auth="Container" type="javax.sql.DataSource"
+        maxActive="50" maxIdle="30" maxWait="10000"
+        username="runelite" password="{{ mysql_pw }}"
+        driverClassName="com.mysql.jdbc.Driver"
+        url="jdbc:mysql://localhost:3306/runelite-tracker?relaxAutoCommit=true"
+        testOnBorrow="true"
+        validationQuery="/* ping */"
+/>
+
+<Environment name="oauth.client-id" value="moo" type="java.lang.String"/>
+<Environment name="oauth.client-secret" value="moo" type="java.lang.String"/>
+<Environment name="minio.endpoint" value="http://127.0.0.1:9000" type="java.lang.String"/>
+<Environment name="minio.accesskey" value="nokey" type="java.lang.String"/>
+<Environment name="minio.secretkey" value="nokey" type="java.lang.String"/>
+<Environment name="minio.bucket" value="runelite" type="java.lang.String"/>
+<Environment name="runelite.twitter.consumerkey" value="moo" type="java.lang.String"/>
+<Environment name="runelite.twitter.secretkey" value="cow" type="java.lang.String"/>
+<Environment name="runelite.twitter.listid" value="12341234" type="java.lang.String"/>
+</Context>

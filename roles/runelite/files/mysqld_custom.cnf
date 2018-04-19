@@ -1,0 +1,3 @@
+[mysqld]
+sql_mode=NO_ENGINE_SUBSTITUTION
+autocommit=1

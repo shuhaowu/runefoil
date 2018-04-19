@@ -1,0 +1,90 @@
+---
+- name: installing dependencies via apt
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - openjdk-8-jdk
+    - iptables
+    - ulogd
+    - mysql-server
+    - libmysql-java
+    - tomcat7
+    - python-mysqldb
+    - python3-requests
+    - tcpdump # debug tools below this line
+    - wget
+    - curl
+
+- name: jdbc directory in tomcat
+  file:
+    path: /usr/share/tomcat7/common
+    state: directory
+
+- name: jdbc directory in tomcat
+  file:
+    path: /usr/share/tomcat7/common/mysql-connector-java.jar
+    src: /usr/share/java/mysql-connector-java.jar
+    state: link
+
+- include_vars: password.json
+
+- name: tomcat7 context file
+  template:
+    src: context.xml
+    dest: /etc/tomcat7/context.xml
+    owner: root
+    group: tomcat7
+    mode: 0640
+
+- name: remove tomcat default ROOT
+  file:
+    path: /var/lib/tomcat7/webapps/ROOT
+    state: absent
+
+- name: setting mysql config
+  copy:
+    src: mysqld_custom.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld_custom.cnf
+    owner: root
+    group: root
+    mode: 0644
+  register: mycnf
+
+- name: restarting mysql
+  service:
+    name: mysql
+    state: restarted
+  when: mycnf.changed
+
+- name: creating runelite dbs
+  mysql_db:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - runelite
+    - runelite-cache2
+    - runelite-tracker
+
+# Apparently this is not created by the runelite services automatically, so
+# this has to be done manually.
+- name: copy session table hack
+  copy:
+    src: session-hack.sql
+    dest: /tmp/session-hack.sql
+    owner: root
+    group: root
+
+- name: creating session table hack
+  mysql_db:
+    state: import
+    name: all
+    target: /tmp/session-hack.sql
+
+- name: creating runelite mysql user
+  mysql_user:
+    name: runelite
+    host: localhost
+    password: "{{ mysql_pw }}"
+    priv: "runelite.*:ALL/runelite-cache2.*:ALL/runelite-tracker.*:ALL"
+
