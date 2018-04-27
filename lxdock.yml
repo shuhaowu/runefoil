@@ -1,4 +1,4 @@
-name: runelite
+name: runefoil
 image: ubuntu/xenial
 
 users:
@@ -6,11 +6,11 @@ users:
     shell: /bin/bash
 
 shell:
-  user: btw
+  user: root
 
 shares:
   - source: .
-    dest: /home/btw/runelite-paranoid
+    dest: /opt/runefoil
 
 x11:
   enabled: yes

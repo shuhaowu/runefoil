@@ -1,0 +1,89 @@
+---
+- name: installing packages for mysql
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - mysql-server
+    - libmysqlclient-dev
+    - python3-pip
+    - git
+    - build-essential
+
+- name: installing cmake for building runelite-mysql
+  pip:
+    executable: pip3
+    name: cmake
+    state: latest
+
+- debug:
+    msg: "TODO: at some point, we need to get rid of the UDF to avoid the hassle below"
+
+- name: cloning runelite-mysql
+  git:
+    repo: "https://github.com/runelite/runelite-mysql.git"
+    dest: /opt/runelite-mysql
+
+- name: running cmake for runelite-mysql
+  command: cmake .
+  args:
+    chdir: /opt/runelite-mysql
+    creates: /opt/runelite-mysql/Makefile
+
+- name: running make for runelite-mysql
+  command: make
+  args:
+    chdir: /opt/runelite-mysql
+    creates: /opt/runelite-mysql/libxp.so
+
+- name: create libxp.so symlink to plugin directory
+  file:
+    src: /opt/runelite-mysql/libxp.so
+    dest: /usr/lib/mysql/plugin/libxp.so
+    state: link
+
+- name: setting mysql config
+  copy:
+    src: mysqld_custom.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld_custom.cnf
+    owner: root
+    group: root
+    mode: 0644
+  register: mycnf
+
+- name: restarting mysql
+  service:
+    name: mysql
+    state: restarted
+  when: mycnf.changed
+
+- name: creating runelite dbs
+  mysql_db:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - runelite
+    - runelite-cache2
+    - runelite-tracker
+
+# Apparently this is not created by the runelite services automatically, so
+# this has to be done manually.
+- name: copy create tables
+  copy:
+    src: create_tables.sql
+    dest: /tmp/create_tables.sql
+    owner: root
+    group: root
+
+- name: creating tables
+  mysql_db:
+    state: import
+    name: all
+    target: /tmp/create_tables.sql
+
+- name: creating runelite mysql user
+  mysql_user:
+    name: runelite
+    host: localhost
+    password: "{{ mysql_pw }}"
+    priv: "runelite.*:ALL/runelite-cache2.*:ALL/runelite-tracker.*:ALL"

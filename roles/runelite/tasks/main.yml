@@ -5,16 +5,22 @@
     state: latest
   with_items:
     - openjdk-8-jdk
-    - iptables
+    - nftables
     - ulogd
     - mysql-server
     - libmysql-java
     - tomcat7
     - python-mysqldb
     - python3-requests
-    - tcpdump # debug tools below this line
+    - python3-setuptools
+    - python3-pip
+    - make
+    - maven
+    - tcpdump         # Debug tools below this line
     - wget
     - curl
+    - htop
+    - strace
 
 - name: jdbc directory in tomcat
   file:
@@ -42,49 +48,29 @@
     path: /var/lib/tomcat7/webapps/ROOT
     state: absent
 
-- name: setting mysql config
+- name: install runefoil
+  pip:
+    executable: pip3
+    name: /opt/runefoil
+    editable: true
+    state: latest
+
+- name: set runelite http service url via profile
   copy:
-    src: mysqld_custom.cnf
-    dest: /etc/mysql/mysql.conf.d/mysqld_custom.cnf
-    owner: root
-    group: root
+    src: runelite_api_url.sh
+    dest: /etc/profile.d/runelite_api_url.sh
     mode: 0644
-  register: mycnf
-
-- name: restarting mysql
-  service:
-    name: mysql
-    state: restarted
-  when: mycnf.changed
-
-- name: creating runelite dbs
-  mysql_db:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - runelite
-    - runelite-cache2
-    - runelite-tracker
-
-# Apparently this is not created by the runelite services automatically, so
-# this has to be done manually.
-- name: copy session table hack
-  copy:
-    src: session-hack.sql
-    dest: /tmp/session-hack.sql
     owner: root
     group: root
 
-- name: creating session table hack
-  mysql_db:
-    state: import
-    name: all
-    target: /tmp/session-hack.sql
+- name: copy runefoil systemd service file
+  copy:
+    src: runefoil.service
+    dest: /etc/systemd/system/runefoil.service
+  register: runefoil_systemd
 
-- name: creating runelite mysql user
-  mysql_user:
-    name: runelite
-    host: localhost
-    password: "{{ mysql_pw }}"
-    priv: "runelite.*:ALL/runelite-cache2.*:ALL/runelite-tracker.*:ALL"
+- name: reload systemd
+  command: systemctl daemon-reload
+  when: runefoil_systemd.changed
 
+- import_tasks: mysql.yml

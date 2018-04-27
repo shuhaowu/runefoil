@@ -1,0 +1,13 @@
+[Unit]
+Description=Runelite via Runefoil
+
+[Service]
+Type=simple
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/home/btw/.Xauthority"
+User=btw
+Group=btw
+PermissionsStartOnly=true
+ExecStartPre=/usr/local/bin/runefoil setup-run
+ExecStart=/usr/local/bin/runefoil run
+TimeoutSec=infinity
