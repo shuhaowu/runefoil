@@ -162,6 +162,7 @@ def enable_network_restrictions():
 
   # TODO: this rule is not strictly necessary, I think there are some DHCP
   # packets that we should probably allow.
+  # Also need to allow pulseaudio
   ipdaddr_rules.append("    ip daddr {} accept".format(_get_default_gateway_linux()))
   ipdaddr_rules = "\n".join(ipdaddr_rules)
 

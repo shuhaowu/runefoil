@@ -60,6 +60,27 @@ $ # download all the maven stuff and compile runelite. This allows you
 $ # to see that there are some progress.
 $ ./scripts/tail-runelite-logs.sh
 ```
+To get audio to work, you need pulseaudio's tcp audio support. Inside
+/etc/pulse/default.pa, you need to add a line:
+
+```
+load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1;10.28.173.0/24 auth-anonymous=1
+```
+
+Replace the 10.xx.xx.xx IP above with the IPv4 you see with
+`ip a show dev lxdbr0` (with a 0 at the end of course).
+
+Upgrading Runefoil
+------------------
+
+If runefoil changed and needs an upgrade, you might be best served to run:
+
+```
+$ lxdock provision
+```
+
+It should fail at the end when it tries to create the mysql tables again, but
+everything else should succeed.
 
 Security Considerations
 -----------------------
@@ -122,9 +143,6 @@ Known Issues
 ------------
 
 In addition to the security issues above, some usability issues remains:
-
-- Audio does not work right now. 
-  - At some point I'll add in pulseaudio support.
 
 - You can only run 1 RL instance at a time. 
   - This is a security measure to ensure no race conditions can occur as we

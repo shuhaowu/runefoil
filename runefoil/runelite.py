@@ -36,11 +36,16 @@ def run():
   if os.geteuid() == 0:
     raise RuntimeError("do not run runelite as root")
 
-  logging.info("Starting runelite via runefoil")
   dirname = os.path.dirname(c.RL_JAR_PATH)
   os.chdir(dirname)
-  os.environ["RUNELITE_API_BASE"] = "http://localhost:8080/runelite-"
-  os.environ["RUNELITE_WS_BASE"] = "wss://localhost:8080/runelite-"
+
+  custom_env = {}
+  custom_env["RUNELITE_API_BASE"] = "http://localhost:8080/runelite-"
+  custom_env["RUNELITE_WS_BASE"] = "wss://localhost:8080/runelite-"
+  custom_env["PULSE_SERVER"] = network_sentry._get_default_gateway_linux()
+
+  logging.info("Starting runelite via runefoil with environment: {}".format(custom_env))
+  os.environ.update(custom_env)
   os.execlp("java", "java", "-jar", os.path.basename(c.RL_JAR_PATH))
 
 

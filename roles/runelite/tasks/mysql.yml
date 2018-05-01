@@ -75,15 +75,15 @@
     owner: root
     group: root
 
-- name: creating tables
-  mysql_db:
-    state: import
-    name: all
-    target: /tmp/create_tables.sql
-
 - name: creating runelite mysql user
   mysql_user:
     name: runelite
     host: localhost
     password: "{{ mysql_pw }}"
     priv: "runelite.*:ALL/runelite-cache2.*:ALL/runelite-tracker.*:ALL"
+
+- name: creating tables
+  mysql_db:
+    state: import
+    name: all
+    target: /tmp/create_tables.sql
