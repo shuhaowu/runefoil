@@ -8,6 +8,10 @@ from . import constants as c
 # TODO: move some of these methods to utils
 from .updater import update, system
 
+GPU_DRIVER_PATHS = [
+  "/usr/lib/nvidia-384"
+]
+
 
 def setup_run():
   if is_running():
@@ -43,10 +47,28 @@ def run():
   custom_env["RUNELITE_API_BASE"] = "http://localhost:8080/runelite-"
   custom_env["RUNELITE_WS_BASE"] = "wss://localhost:8080/runelite-"
   custom_env["PULSE_SERVER"] = network_sentry._get_default_gateway_linux()
+  custom_env["LD_LIBRARY_PATH"] = ":".join(GPU_DRIVER_PATHS)
 
   logging.info("Starting runelite via runefoil with environment: {}".format(custom_env))
   os.environ.update(custom_env)
-  os.execlp("java", "java", "-jar", os.path.basename(c.RL_JAR_PATH))
+
+  # https://github.com/runelite/static.runelite.net/blob/a8a19d47521a6e9d00c4eb449405697021d175b8/bootstrap.json#L17-L23
+  args = [
+    "java",
+    "-Xmx512m",
+    "-Xss2m",
+    "-XX:CompileThreshold=1500",
+    "-Xincgc",
+    "-XX:+UseConcMarkSweepGC",
+    "-XX:+UseParNewGC",
+    "-Djna.nosys=true",
+    "-Dsun.java2d.noddraw=true",
+    "-Dsun.java2d.opengl=true",
+    "-jar",
+    os.path.basename(c.RL_JAR_PATH),
+  ]
+
+  os.execlp("java", *args)
 
 
 def is_running():
