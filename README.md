@@ -79,6 +79,8 @@ If runefoil changed and needs an upgrade, you might be best served to run:
 $ lxdock provision
 ```
 
+**WARNING: THIS WILL TERMINATE YOUR RUNESCAPE SESSION.**
+
 It should fail at the end when it tries to create the mysql tables again, but
 everything else should succeed.
 

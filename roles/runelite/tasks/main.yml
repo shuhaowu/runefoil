@@ -1,4 +1,14 @@
 ---
+- name: terminating runelite in 10 seconds, press CTRL+C to cancel
+  command: sleep 10
+  changed_when: false
+
+- name: terminating runelite
+  shell: systemctl stop runefoil || true
+
+- name: unrestrict network access
+  shell: runefoil-network unrestricted || true
+
 - name: installing dependencies via apt
   apt:
     name: "{{ item }}"
@@ -50,11 +60,9 @@
     state: absent
 
 - name: install runefoil
-  pip:
-    executable: pip3
-    name: /opt/runefoil
-    editable: true
-    state: latest
+  command: python3 setup.py install
+  args:
+    chdir: /opt/runefoil
 
 - name: set runelite http service url via profile
   copy:

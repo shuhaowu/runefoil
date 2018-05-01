@@ -137,6 +137,7 @@ def _allowed_hostnames_to_ips():
   hostnames.append("runescape.com")
   hostnames.append("www.runescape.com")
   hostnames.append("services.runescape.com")
+  hostnames.append("secure.runescape.com")
   return _get_ips(hostnames)
 
 
