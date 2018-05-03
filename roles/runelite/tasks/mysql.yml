@@ -40,7 +40,7 @@
   file:
     src: /opt/runelite-mysql/libxp.so
     dest: /usr/lib/mysql/plugin/libxp.so
-    state: link
+    state: hard
 
 - name: setting mysql config
   copy:
