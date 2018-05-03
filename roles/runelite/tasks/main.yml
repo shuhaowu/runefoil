@@ -19,7 +19,7 @@
     - ulogd
     - mysql-server
     - libmysql-java
-    - tomcat7
+    - tomcat8
     - python-mysqldb
     - python3-requests
     - python3-setuptools
@@ -35,28 +35,28 @@
 
 - name: jdbc directory in tomcat
   file:
-    path: /usr/share/tomcat7/common
+    path: /usr/share/tomcat8/common
     state: directory
 
 - name: jdbc directory in tomcat
   file:
-    path: /usr/share/tomcat7/common/mysql-connector-java.jar
+    path: /usr/share/tomcat8/common/mysql-connector-java.jar
     src: /usr/share/java/mysql-connector-java.jar
     state: link
 
 - include_vars: password.json
 
-- name: tomcat7 context file
+- name: tomcat8 context file
   template:
     src: context.xml
-    dest: /etc/tomcat7/context.xml
+    dest: /etc/tomcat8/context.xml
     owner: root
-    group: tomcat7
+    group: tomcat8
     mode: 0640
 
 - name: remove tomcat default ROOT
   file:
-    path: /var/lib/tomcat7/webapps/ROOT
+    path: /var/lib/tomcat8/webapps/ROOT
     state: absent
 
 - name: install runefoil

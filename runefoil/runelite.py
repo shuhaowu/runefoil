@@ -24,7 +24,7 @@ def setup_run():
     logging.warn("btw process detected, killing...")
     system("killall -s 9 -u btw")  # make sure nothing lives to ensure they can't access the network
 
-  system("systemctl stop tomcat7")
+  system("systemctl stop tomcat8")
 
   # It's okay to leave this network restriction disabled if error occurs as
   # RL is already shutdown. The next time we successfully launch, we have to
@@ -33,7 +33,7 @@ def setup_run():
   update("source")
   network_sentry.enable_network_restrictions()
 
-  system("systemctl start tomcat7")
+  system("systemctl start tomcat8")
 
 
 def run():
