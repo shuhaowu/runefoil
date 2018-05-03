@@ -11,6 +11,8 @@ shell:
 shares:
   - source: .
     dest: /opt/runefoil
+  - source: ${RUNELITE_SETTINGS_PATH}
+    dest: /home/btw/.runelite
 
 x11:
   enabled: yes

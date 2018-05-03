@@ -51,6 +51,13 @@ $ export PATH="`python3 -m site --user-base`/bin:$PATH"
 $ cd ~/apps # whereever you want to put it
 $ git clone https://github.com/shuhaowu/runefoil.git
 $ cd runefoil
+
+$ # you can change the below into any directory you want.
+$ # this directory will contain your runelite settings. For example you can
+$ # dropbox sync it.
+$ echo "RUNELITE_SETTINGS_PATH=./dot-runelite" > .env
+$ mkdir dot-runelite
+
 $ # In the future, I'll replace these scripts with a small GUI program
 $ ./scripts/setup-container.sh
 $ ./scripts/start-runelite.sh
