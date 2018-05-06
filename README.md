@@ -162,6 +162,5 @@ In addition to the security issues above, some usability issues remains:
     and launch multiple containers.
 - API server does not necessarily have all the features.
   - Feed updates do not fetch twitter/runelite updates for obvious reasons.
-  - Something with the session tracking doesn't work with the mysql instance as
-    it keeps rolling back...
-  - Other issues might be fixable.
+  - Pricing information may be missing as the RL client caches data for an hour
+    and RL server only tries to get data from the RS API every 5 min.
