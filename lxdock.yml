@@ -11,8 +11,16 @@ shell:
 shares:
   - source: .
     dest: /opt/runefoil
+    share_properties:
+      readonly: "true"
+
   - source: ${RUNELITE_SETTINGS_PATH}
     dest: /home/btw/.runelite
+
+  - source: runelite
+    dest: /opt/runelite-forked-src
+    share_properties:
+      optional: "true"
 
 x11:
   enabled: yes

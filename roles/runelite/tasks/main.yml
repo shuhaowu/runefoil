@@ -59,10 +59,16 @@
     path: /var/lib/tomcat8/webapps/ROOT
     state: absent
 
+- name: disable tomcat8
+  service:
+    name: tomcat8
+    enabled: false
+    state: stopped
+
 - name: install runefoil
-  command: python3 setup.py install
+  command: python3 /opt/runefoil/setup.py install
   args:
-    chdir: /opt/runefoil
+    chdir: /tmp
 
 - name: set runelite http service url via profile
   copy:

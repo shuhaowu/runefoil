@@ -107,4 +107,6 @@ venv.bak/
 .mypy_cache/
 
 .env
+
 dot-runelite/
+runelite/
