@@ -5,6 +5,10 @@ Run Runelite in a secure environment such that it's not possible for it to
 exfiltrate data(*). The name Runefoil is inspired by the tinfoil hat, as we are
 paranoid enough to run it in such a convoluted environment.
 
+**Runelite is currently partially closed source, which breaks some of the
+security assumptions of this project. Future effort is currently pending as it
+is unclear if we can be 100% secure.**
+
 (*) Not 100% secure, see security considerations below.
 
 Runefoil is designed to be relatively small. I'm hoping to keep the number of
