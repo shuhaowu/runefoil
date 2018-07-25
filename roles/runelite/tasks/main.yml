@@ -66,9 +66,9 @@
     state: stopped
 
 - name: install runefoil
-  command: python3 /opt/runefoil/setup.py install
+  command: pip3 install .
   args:
-    chdir: /tmp
+    chdir: /opt/runefoil
 
 - name: set runelite http service url via profile
   copy:

@@ -8,13 +8,13 @@ from setuptools.command.install import install as _install
 
 class install(_install):
   def run(self):
-    cwd = os.getcwd()
-    os.chdir(os.path.join(os.path.dirname(__file__), "runefoil", "files"))
-    try:
-      print("compiling JarVerifier...")
-      os.system("make")
-    finally:
-      os.chdir(cwd)
+    # cwd = os.getcwd()
+    # os.chdir(os.path.join(os.path.dirname(__file__), "runefoil", "files"))
+    # try:
+    #   print("compiling JarVerifier...")
+    #   os.system("make")
+    # finally:
+    #   os.chdir(cwd)
     super().run()
 
 
