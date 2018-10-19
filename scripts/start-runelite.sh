@@ -5,6 +5,10 @@ echo "If so, you should use scripts/tail-runelite-logs.sh to monitor the progres
 
 set -xe
 
+if lxdock status | grep -E -q 'stopped'; then
+  lxdock up
+fi
+
 if lxdock shell -c "systemctl status runefoil" | grep -E -q 'inactive|failed'; then
   lxdock shell -c "systemctl start runefoil"
 else
