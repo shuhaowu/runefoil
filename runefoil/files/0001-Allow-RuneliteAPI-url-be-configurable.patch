@@ -1,18 +1,19 @@
-From e104f2e4bce43af2219ca7317c3e71ed9ca9360a Mon Sep 17 00:00:00 2001
+From 0997c68b00be46c267b5fbb92d8f5ff404b780a3 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Sun, 29 Apr 2018 02:02:50 -0400
+Date: Thu, 13 Dec 2018 14:33:03 -0500
 Subject: [PATCH] Allow RuneliteAPI url be configurable
 
-Specifically configurable via environment variables.
+So it can be locally overwritten by a launcher via an environment
+variable.
 ---
  .../java/net/runelite/http/api/RuneLiteAPI.java    | 14 ++++++++++++--
  1 file changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-index 690048248..3ee4f5a77 100644
+index bc6721518..b73758d20 100644
 --- a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
 +++ b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-@@ -66,12 +66,22 @@ public class RuneLiteAPI
+@@ -71,7 +71,12 @@ public class RuneLiteAPI
  
  	public static HttpUrl getApiBase()
  	{
@@ -24,6 +25,9 @@ index 690048248..3ee4f5a77 100644
 +		}
 +		return HttpUrl.parse(base + getVersion());
  	}
+ 
+ 	public static HttpUrl getStaticBase()
+@@ -81,7 +86,12 @@ public class RuneLiteAPI
  
  	public static String getWsEndpoint()
  	{
@@ -38,5 +42,5 @@ index 690048248..3ee4f5a77 100644
  
  	public static String getVersion()
 -- 
-2.17.0
+2.19.2
 
