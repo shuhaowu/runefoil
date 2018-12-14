@@ -13,7 +13,7 @@ import tempfile
 from . import constants as c
 
 GIT_URL = "https://github.com/runelite/runelite"
-LOCAL_API_PATCH_FILE = os.path.join(c.FILES_PATH, "0001-Allow-RuneliteAPI-url-be-configurable.patch")
+LOCAL_API_PATCH_FILE = os.path.join(c.FILES_PATH, "0001-Runefoil-base-patch-set.patch")
 
 REPO_URL = "https://repo.runelite.net"
 BOOTSTRAP_URL = "https://raw.githubusercontent.com/runelite/static.runelite.net/gh-pages/bootstrap.json"
