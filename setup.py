@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os
+# import os
 
 from setuptools import setup, find_packages
 from setuptools.command.install import install as _install

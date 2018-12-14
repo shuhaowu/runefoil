@@ -30,7 +30,7 @@ def setup_run():
   # RL is already shutdown. The next time we successfully launch, we have to
   # enable network restrictions, so it is okay.
   network_sentry.disable_network_restrictions()
-  update("source")
+  update()
   network_sentry.enable_network_restrictions()
 
   system("systemctl start tomcat8")
@@ -46,8 +46,15 @@ def run():
   custom_env = {}
   custom_env["RUNELITE_API_BASE"] = "http://localhost:8080/runelite-"
   custom_env["RUNELITE_WS_BASE"] = "wss://localhost:8080/runelite-"
+  custom_env["RUNELITE_STATIC_BASE"] = "https://localhost:8081"
   custom_env["PULSE_SERVER"] = network_sentry._get_default_gateway_linux()
-  custom_env["LD_LIBRARY_PATH"] = ":".join(GPU_DRIVER_PATHS)
+
+  gpu_driver_paths = []
+  for path in GPU_DRIVER_PATHS:
+    if os.path.exists(path):
+      gpu_driver_paths.append(path)
+
+  custom_env["LD_LIBRARY_PATH"] = ":".join(gpu_driver_paths)
 
   logging.info("Starting runelite via runefoil with environment: {}".format(custom_env))
   os.environ.update(custom_env)
