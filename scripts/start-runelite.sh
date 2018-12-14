@@ -5,7 +5,7 @@ echo "If so, you should use scripts/tail-runelite-logs.sh to monitor the progres
 
 set -xe
 
-if lxdock status | grep -E -q 'stopped'; then
+if lxdock status | grep -E -q 'stopped|not-created'; then
   lxdock up
 fi
 
