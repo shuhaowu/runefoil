@@ -2,6 +2,8 @@
 -- TODO: at some point should not require this.
 -- TODO: maybe at some point in the future we don't need this file altogether.
 
+DROP FUNCTION IF EXISTS level_for_xp;
+
 CREATE FUNCTION level_for_xp RETURNS INTEGER SONAME 'libxp.so';
 
 --
@@ -9,7 +11,7 @@ CREATE FUNCTION level_for_xp RETURNS INTEGER SONAME 'libxp.so';
 -- Obtained from ./cache-updater/schema.sql
 --
 
-CREATE TABLE `runelite-cache2`.`archive` (
+CREATE TABLE IF NOT EXISTS `runelite-cache2`.`archive` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `archiveId` int(11) NOT NULL,
   `nameHash` int(11) NOT NULL,
@@ -21,7 +23,7 @@ CREATE TABLE `runelite-cache2`.`archive` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE `runelite-cache2`.`cache` (
+CREATE TABLE IF NOT EXISTS `runelite-cache2`.`cache` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `revision` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -30,7 +32,7 @@ CREATE TABLE `runelite-cache2`.`cache` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE `runelite-cache2`.`file` (
+CREATE TABLE IF NOT EXISTS `runelite-cache2`.`file` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `archive` int(11) NOT NULL,
   `fileId` int(11) NOT NULL,
@@ -40,7 +42,7 @@ CREATE TABLE `runelite-cache2`.`file` (
   CONSTRAINT `file_ibfk_1` FOREIGN KEY (`archive`) REFERENCES `archive` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `runelite-cache2`.`index` (
+CREATE TABLE IF NOT EXISTS `runelite-cache2`.`index` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cache` int(11) NOT NULL,
   `indexId` int(11) NOT NULL,
@@ -52,7 +54,7 @@ CREATE TABLE `runelite-cache2`.`index` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE `runelite-cache2`.`index_archive` (
+CREATE TABLE IF NOT EXISTS `runelite-cache2`.`index_archive` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `index` int(11) NOT NULL,
   `archive` int(11) NOT NULL,
@@ -69,7 +71,7 @@ CREATE TABLE `runelite-cache2`.`index_archive` (
 -- Added (6) to timestamp to avoid issues with fractional seconds and rollback
 --
 
-CREATE TABLE `runelite`.`session` (
+CREATE TABLE IF NOT EXISTS `runelite`.`session` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uuid` varchar(36) NOT NULL,
   `ip` varchar(39) NOT NULL,
@@ -85,7 +87,7 @@ CREATE TABLE `runelite`.`session` (
 -- Obtained from ./http-service/target/classes/net/runelite/http/service/xp/schema.sql
 --
 
-CREATE TABLE `runelite-tracker`.`player` (
+CREATE TABLE IF NOT EXISTS `runelite-tracker`.`player` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `tracked_since` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -93,7 +95,7 @@ CREATE TABLE `runelite-tracker`.`player` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `runelite-tracker`.`xp` (
+CREATE TABLE IF NOT EXISTS `runelite-tracker`.`xp` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `time` timestamp NOT NULL DEFAULT current_timestamp(),
   `player` int(11) NOT NULL,

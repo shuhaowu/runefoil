@@ -11,27 +11,26 @@
 
 - name: installing dependencies via apt
   apt:
-    name: "{{ item }}"
     state: latest
-  with_items:
-    - openjdk-8-jdk
-    - nftables
-    - ulogd
-    - mysql-server
-    - libmysql-java
-    - tomcat8
-    - python-mysqldb
-    - python3-requests
-    - python3-setuptools
-    - python3-pip
-    - make
-    - maven
-    - pulseaudio
-    - tcpdump         # Debug tools below this line
-    - wget
-    - curl
-    - htop
-    - strace
+    name:
+      - libmysql-java
+      - make
+      - maven
+      - mysql-server
+      - nftables
+      - openjdk-8-jdk
+      - pulseaudio
+      - python-mysqldb
+      - python3-pip
+      - python3-requests
+      - python3-setuptools
+      - tomcat8
+      - ulogd
+      - tcpdump         # Debug tools below this line
+      - wget
+      - curl
+      - htop
+      - strace
 
 - name: jdbc directory in tomcat
   file:
@@ -66,7 +65,7 @@
     state: stopped
 
 - name: install runefoil
-  command: pip3 install .
+  command: pip3 install --upgrade .
   args:
     chdir: /opt/runefoil
 

@@ -109,4 +109,4 @@ venv.bak/
 .env
 
 dot-runelite/
-runelite/
+/runelite

@@ -1,12 +1,14 @@
 import contextlib
-import logging
-import requests
+import grp
 import hashlib
-import subprocess
+import logging
+import os
+import pwd
+import requests
 import shutil
+import subprocess
 import sys
 import tempfile
-import os
 
 from . import constants as c
 
@@ -165,7 +167,10 @@ def update(action):
   final_war_path = os.path.join(c.RL_WAR_BASEPATH, "runelite-{}.war".format(remote_version))
   logging.info("redeploying war to {}".format(final_war_path))
   shutil.rmtree(c.RL_WAR_BASEPATH)
+
   os.mkdir(c.RL_WAR_BASEPATH, 0o755)
+  os.chown(c.RL_WAR_BASEPATH, pwd.getpwnam("tomcat8").pw_uid, grp.getgrnam("tomcat8").gr_gid)
+
   shutil.copyfile(war_path, final_war_path)
 
   if tempdir is not None:

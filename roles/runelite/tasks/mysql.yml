@@ -1,20 +1,19 @@
 ---
 - name: installing packages for mysql
   apt:
-    name: "{{ item }}"
+    name:
+      - mysql-server
+      - libmysqlclient-dev
+      - python3-pip
+      - git
+      - build-essential
     state: latest
-  with_items:
-    - mysql-server
-    - libmysqlclient-dev
-    - python3-pip
-    - git
-    - build-essential
 
 - name: installing cmake for building runelite-mysql
   pip:
     executable: pip3
     name: cmake
-    state: latest
+    state: present
 
 - debug:
     msg: "TODO: at some point, we need to get rid of the UDF to avoid the hassle below"
