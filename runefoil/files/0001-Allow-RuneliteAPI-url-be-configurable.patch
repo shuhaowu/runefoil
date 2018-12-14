@@ -1,4 +1,4 @@
-From 0997c68b00be46c267b5fbb92d8f5ff404b780a3 Mon Sep 17 00:00:00 2001
+From c36a98b8776800695a867ece19c670cbf873f6bf Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Thu, 13 Dec 2018 14:33:03 -0500
 Subject: [PATCH] Allow RuneliteAPI url be configurable
@@ -7,7 +7,8 @@ So it can be locally overwritten by a launcher via an environment
 variable.
 ---
  .../java/net/runelite/http/api/RuneLiteAPI.java    | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ .../runelite/http/service/item/ItemService.java    |  1 +
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
 index bc6721518..b73758d20 100644
@@ -41,6 +42,18 @@ index bc6721518..b73758d20 100644
  	}
  
  	public static String getVersion()
+diff --git a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
+index 67fac7188..b67738f75 100644
+--- a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
++++ b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
+@@ -457,6 +457,7 @@ public class ItemService
+ 				break;
+ 			case ITEM:
+ 				fetchItem(pendingLookup.getItemId());
++				fetchPrice(pendingLookup.getItemId());
+ 				break;
+ 		}
+ 	}
 -- 
 2.19.2
 

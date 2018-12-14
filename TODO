@@ -1,0 +1,32 @@
+To get API server prices working:
+
+- Option 1: run it the real way.
+  - The API server relies on the `runelite-cache2` tables in order to crawl
+    prices from the RS official API. The cache table is populated by
+    cache-updater, which can be run via
+    `java -jar target/cache-updater-1.5.4-spring-boot.jar` after compilation
+    and some adjustments to `application.properties` to the correct values.
+  - The cache-updater relies on minio, which is a bigger component
+  - This discovers the list of tradable item ids via the OSRS cache (?) and
+    populate the prices by picking one to update every 20 seconds on the
+    server.
+  - If the server is not running all the time, it could be problematic as
+    everything will be out of date all the time.
+- Option 2: import + patch
+  - On every boot, update the price with OSB information.
+  - Patch runelite so every fetchItem will update the price locally
+  - The prices table has a time stamp for each item, allowing history tracking.
+    - Runelite doesn't seem to use this.
+
+- IMPORTANT FOR ITEM STATS
+  - Clone https://github.com/runelite/static.runelite.net and serve it via
+    nginx. Also requires patching in base.
+
+
+We should shutdown tomcat8, nginx after runefoil.service shutdown in systemd.
+
+runelite-forked-src diff with the tagged version, and then apply that patch to
+/opt/runelite-src before compiling. Always apply the base runefoil patches,
+tho.
+
+Reinstall runefoil automatically if changed.
