@@ -16,6 +16,7 @@
       - libmysql-java
       - make
       - maven
+      - mesa-utils
       - mysql-server
       - nftables
       - openjdk-8-jdk
@@ -26,6 +27,7 @@
       - python3-setuptools
       - tomcat8
       - ulogd
+      - x11-apps
       - tcpdump         # Debug tools below this line
       - wget
       - curl
@@ -69,10 +71,10 @@
   args:
     chdir: /opt/runefoil
 
-- name: set runelite http service url via profile
+- name: set environment variable via profile
   copy:
-    src: runelite_api_url.sh
-    dest: /etc/profile.d/runelite_api_url.sh
+    src: envs_btw.sh
+    dest: /etc/profile.d/envs_btw.sh
     mode: 0644
     owner: root
     group: root

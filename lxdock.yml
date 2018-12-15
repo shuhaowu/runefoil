@@ -8,6 +8,7 @@ users:
 shell:
   user: root
 
+# See https://blog.simos.info/how-to-easily-run-graphics-accelerated-gui-apps-in-lxd-containers-on-your-ubuntu-desktop/
 shares:
   - source: .
     dest: /opt/runefoil
@@ -21,6 +22,9 @@ shares:
     dest: /opt/runelite-forked-src
     share_properties:
       optional: "true"
+
+  - source: ${XDG_RUNTIME_DIR}/pulse/native
+    dest: /tmp/.pulse-native
 
 x11:
   enabled: yes
