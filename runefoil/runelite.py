@@ -13,18 +13,29 @@ GPU_DRIVER_PATHS = [
 ]
 
 
-def setup_run():
-  if is_running():
-    print("error: runelite is already running in this container, cannot run another due to security restrictions", file=sys.stderr)
-    sys.exit(1)
+def _start_services():
+  system("systemctl start tomcat8")
 
+
+def _stop_services():
+  system("systemctl stop tomcat8")
+
+
+def _kill_btw_processes():
   output = subprocess.check_output("ps aux | awk '{ print $1 }' | sed '1 d' | sort | uniq", shell=True)
   output = output.decode("utf-8").strip().split("\n")
   if "btw" in output:
     logging.warn("btw process detected, killing...")
     system("killall -s 9 -u btw")  # make sure nothing lives to ensure they can't access the network
 
-  system("systemctl stop tomcat8")
+
+def setup_run():
+  if is_running():
+    print("error: runelite is already running in this container, cannot run another due to security restrictions", file=sys.stderr)
+    sys.exit(1)
+
+  _stop_services()
+  _kill_btw_processes()
 
   # It's okay to leave this network restriction disabled if error occurs as
   # RL is already shutdown. The next time we successfully launch, we have to
@@ -33,7 +44,7 @@ def setup_run():
   update()
   network_sentry.enable_network_restrictions()
 
-  system("systemctl start tomcat8")
+  _start_services()
 
 
 def run():
@@ -78,6 +89,15 @@ def run():
   os.execlp("java", *args)
 
 
+def cleanup_run():
+  _stop_services()
+  _kill_btw_processes()
+
+
+def run_static_server():
+  pass
+
+
 def is_running():
   return False
 
@@ -85,7 +105,7 @@ def is_running():
 def main():
   logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.DEBUG)
   if len(sys.argv) < 2:
-    print("error: must specify action as either setup-run, run, or stop", file=sys.stderr)
+    print("error: must specify action as either setup-run, run, clean-run, or static", file=sys.stderr)
     sys.exit(1)
 
   action = sys.argv[1].lower()
@@ -93,6 +113,10 @@ def main():
     setup_run()
   elif action == "run":
     run()
+  elif action == "cleanup-run":
+    cleanup_run()
+  elif action == "static":
+    run_static_server()
   else:
     print("error: unknown action {}".format(action), file=sys.stderr)
     sys.exit(1)

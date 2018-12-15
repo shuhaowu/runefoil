@@ -10,4 +10,5 @@ Group=btw
 PermissionsStartOnly=true
 ExecStartPre=/usr/local/bin/runefoil setup-run
 ExecStart=/usr/local/bin/runefoil run
+ExecStopPost=/usr/local/bin/runefoil cleanup-run
 TimeoutSec=infinity
