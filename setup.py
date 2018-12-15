@@ -28,7 +28,8 @@ setup(
   entry_points={"console_scripts": [
     "runefoil-update = runefoil.updater:main",
     "runefoil-network = runefoil.network_sentry:main",
-    "runefoil = runefoil.runelite:main"
+    "runefoil = runefoil.runelite:main",
+    "runefoil-price = runefoil.price_fetcher:main"
   ]},
   zip_safe=False
 )

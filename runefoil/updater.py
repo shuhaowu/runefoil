@@ -32,19 +32,24 @@ def system(cmd):
   subprocess.check_call(cmd, shell=True)
 
 
-def check_current_version():
-  data = requests.get(BOOTSTRAP_URL).json()
-  return data["client"]["version"]
-
-
-def check_for_update():
+def get_local_version():
   if os.path.exists(c.RL_VERSION_PATH):
     with open(c.RL_VERSION_PATH) as f:
       local_version = f.read().strip()
   else:
     local_version = "none"
 
-  remote_version = check_current_version()
+  return local_version
+
+
+def get_remote_version():
+  data = requests.get(BOOTSTRAP_URL).json()
+  return data["client"]["version"]
+
+
+def check_for_update():
+  local_version = get_local_version()
+  remote_version = get_remote_version()
   logging.info("Local version: {} | Remote version: {}".format(local_version, remote_version))
   return local_version, remote_version
 

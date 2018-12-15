@@ -12,7 +12,9 @@
 - name: installing cmake for building runelite-mysql
   pip:
     executable: pip3
-    name: cmake
+    name:
+      - cmake
+      - pymysql
     state: present
 
 - debug:
