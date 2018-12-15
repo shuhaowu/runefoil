@@ -85,8 +85,14 @@
     dest: /etc/systemd/system/runefoil.service
   register: runefoil_systemd
 
+- name: copy runefoil systemd service file
+  copy:
+    src: static-runelite-net.service
+    dest: /etc/systemd/system/static-runelite-net.service
+  register: static_runelite_net_systemd
+
 - name: reload systemd
   command: systemctl daemon-reload
-  when: runefoil_systemd.changed
+  when: runefoil_systemd.changed or static_runelite_net_systemd.changed
 
 - import_tasks: mysql.yml

@@ -15,10 +15,12 @@ GPU_DRIVER_PATHS = [
 
 def _start_services():
   system("systemctl start tomcat8")
+  system("systemctl start static-runelite-net")
 
 
 def _stop_services():
   system("systemctl stop tomcat8")
+  system("systemctl stop static-runelite-net")
 
 
 def _kill_btw_processes():
@@ -95,7 +97,18 @@ def cleanup_run():
 
 
 def run_static_server():
-  pass
+  import http.server
+  import socketserver
+
+  os.chdir(c.RL_STATIC_PATH)
+  httpd = socketserver.TCPServer(("", 8081), http.server.SimpleHTTPRequestHandler)
+  try:
+    httpd.serve_forever()
+  except KeyboardInterrupt:
+    return
+  finally:
+    print("shutting down")
+    httpd.server_close()
 
 
 def is_running():

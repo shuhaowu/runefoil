@@ -1,0 +1,8 @@
+[Unit]
+Description=Local static.runelite.net mirror
+
+[Service]
+Type=simple
+User=btw
+Group=btw
+ExecStart=/usr/local/bin/runefoil static
