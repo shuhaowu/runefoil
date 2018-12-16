@@ -5,6 +5,7 @@ import logging
 
 from . import network_sentry
 from . import constants as c
+from .price_fetcher import PriceFetcher
 # TODO: move some of these methods to utils
 from .updater import update, system
 
@@ -44,6 +45,8 @@ def setup_run():
   # enable network restrictions, so it is okay.
   network_sentry.disable_network_restrictions()
   update()
+  fetcher = PriceFetcher()
+  fetcher.fetch()
   network_sentry.enable_network_restrictions()
 
   _start_services()

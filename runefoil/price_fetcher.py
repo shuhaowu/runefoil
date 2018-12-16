@@ -6,7 +6,8 @@ import requests
 import sys
 import time
 
-from .updater import get_local_version
+from . import constants as c
+from .updater import get_local_version, system
 
 UA = "okhttp/3.7.0"
 RL_VERSION = get_local_version()
@@ -14,8 +15,10 @@ RL_PRICES_URL = "https://api.runelite.net/runelite-{}/item/prices.json".format(R
 RL_ITEM_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}"
 RS_ITEM_ICON_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_sprite.gif?id={}"
 RS_ITEM_ICON_LARGE_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_big.gif?id={}"
-RL_ITEM_ICON_URL = RL_ITEM_URL + "/icon"
-RL_ITEM_ICON_LARGE_URL = RL_ITEM_ICON_URL + "/large"
+
+DB_USERNAME = "runelite"
+DB_PASSWORD = "ironmanbtw"
+DB_DUMP_PATH = os.path.join(c.FILES_PATH, "items-prices-db-dump.sql.gz")
 
 
 class PriceFetcher(object):
@@ -26,8 +29,8 @@ class PriceFetcher(object):
 
     self.dbconn = pymysql.connect(
       "127.0.0.1",
-      "runelite",
-      "ironmanbtw",
+      DB_USERNAME,
+      DB_PASSWORD,
       cursorclass=pymysql.cursors.DictCursor
     )
 
@@ -36,6 +39,12 @@ class PriceFetcher(object):
 
   def fetch(self):
     with self.dbconn.cursor() as c:
+      c.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'runelite' AND table_name = 'items'")
+      r = c.fetchone()
+      if r == 0:
+        logging.error("database not created yet, not fetching!")
+        return
+
       c.execute("SELECT COUNT(*) as cnt FROM `runelite`.`items`")
       row_count = c.fetchone()["cnt"]
 
@@ -112,6 +121,9 @@ class PriceFetcher(object):
 
     self._update_prices_table_and_commit(all_prices)
 
+  def restore(self):
+    system("gunzip -c {} | mysql -h 127.0.0.1 -u {} -p{} runelite".format(DB_DUMP_PATH, DB_USERNAME, DB_PASSWORD))
+
   def _select_item(self, item_id, cursor):
     cursor.execute("SELECT * FROM `runelite`.`items` WHERE id = %s", (item_id, ))
     return cursor.fetchone()
@@ -162,7 +174,7 @@ def main():
 
   logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.INFO)
   if len(sys.argv) < 2:
-    print("error: must specify action as either seed or fetch", file=sys.stderr)
+    print("error: must specify action as either restore, seed or fetch", file=sys.stderr)
     sys.exit(1)
 
   action = sys.argv[1].lower()
@@ -171,7 +183,7 @@ def main():
   fetcher = PriceFetcher(rate_limit=rate_limit)
   f = getattr(fetcher, action, None)
   if f is None:
-    print("error: {} is not valid. it must be either seed or fetch.".format(action), file=sys.stderr)
+    print("error: {} is not valid. it must be either restore, seed, or fetch.".format(action), file=sys.stderr)
     sys.exit(1)
 
   f()
