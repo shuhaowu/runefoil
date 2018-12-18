@@ -13,6 +13,8 @@ GPU_DRIVER_PATHS = [
   "/usr/lib/nvidia-384"
 ]
 
+OPENGL_DISABLED = os.path.exists(c.RL_GL_DISABLE_PATH)
+
 
 def _start_services():
   system("systemctl start tomcat8")
@@ -86,10 +88,14 @@ def run():
     "-XX:+UseParNewGC",
     "-Djna.nosys=true",
     "-Dsun.java2d.noddraw=true",
-    "-Dsun.java2d.opengl=true",
     "-jar",
     os.path.basename(c.RL_JAR_PATH),
   ]
+
+  # Maybe required in intel GPUs
+  # See https://github.com/runelite/runelite/issues/2889
+  if not OPENGL_DISABLED:
+    args.append("-Dsun.java2d.opengl=true")
 
   os.execlp("java", *args)
 

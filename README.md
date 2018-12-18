@@ -2,14 +2,14 @@ Runefoil
 ========
 
 Run Runelite in a secure environment such that it's not possible for it to
-exfiltrate data(*). The name Runefoil is inspired by the tinfoil hat, as we are
+exfiltrate data(-). The name Runefoil is inspired by the tinfoil hat, as we are
 paranoid enough to run it in such a convoluted environment.
 
-**Runelite is currently partially closed source, which breaks some of the
-security assumptions of this project. Future effort is currently pending as it
-is unclear if we can be 100% secure.**
+**Runelite is currently partially closed source due to the injector. This means
+the security assumption that the runelite source repository is safe is
+partially broken.**
 
-(*) Not 100% secure, see security considerations below.
+(-) Not 100% secure, see security considerations below.
 
 Runefoil is designed to be relatively small. I'm hoping to keep the number of
 lines of code low, such that anyone can easily audit it.
@@ -71,15 +71,12 @@ $ # download all the maven stuff and compile runelite. This allows you
 $ # to see that there are some progress.
 $ ./scripts/tail-runelite-logs.sh
 ```
-To get audio to work, you need pulseaudio's tcp audio support. Inside
-/etc/pulse/default.pa, you need to add a line:
 
-```
-load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1;10.28.173.0/24 auth-anonymous=1
-```
+### Issues with rendering ###
 
-Replace the 10.xx.xx.xx IP above with the IPv4 you see with
-`ip a show dev lxdbr0` (with a 0 at the end of course).
+If you experience issues with rendering ()b)bbintel GPU beaware), disable opengl via
+`scripts/disable-opengl.sh`. To re-enable opengl, use
+`scripts/enable-opengl.sh`.
 
 Upgrading Runefoil
 ------------------
@@ -91,9 +88,6 @@ $ lxdock provision
 ```
 
 **WARNING: THIS WILL TERMINATE YOUR RUNESCAPE SESSION.**
-
-It should fail at the end when it tries to create the mysql tables again, but
-everything else should succeed.
 
 Security Considerations
 -----------------------
@@ -109,12 +103,14 @@ even source tree. By the time someone notices and post it to reddit, it may be
 too late already and your RS account and other digital assets (incl. but not
 limited to your email, facebook, etc) may be stolen already.
 
-Runefoil treats all Runelite binaries as hostile. It mitigates the security
-issues by running the hostile binaries in a restricted environment such that it
+Runefoil treats all Runelite code as hostile. It mitigates the security
+issues by running the hostile code in a restricted environment such that it
 can only make network connections to runescape's servers. This is enforced in a
 container via nftables. To avoid information disclosure via DNS, DNS requests
 are forbidden as well. It is replaced with a hosts file with the correct IP
 address for all OSRS server hostnames and other required RS hostnames.
+Operations requiring network access such as update checking is done only be
+trusted code present in this repository.
 
 Update checking is done when the application is in start up mode. When the
 application starts, it first kills all the custom processes that can possibly
@@ -132,6 +128,10 @@ route:
     setting the rules.
 - Runelite binary posts your credential via a direct message in game.
   - This can be fixed if you get yourself permamuted in game.
+- Runelite compilation process has malicious code.
+
+Due to the partially closed source nature of Runelite, some of these operations
+could be hidden in the closed source parts.
 
 That said, even in the most paranoid scenario, Runefoil should be secure for
 the following reasons:
@@ -142,8 +142,9 @@ the following reasons:
   download server as opposed to the source repo directly.
   - Since runefoil compiles the code from source, this breach will not affect
     runefoil.
-- A breach will likely be the result of a significant effort, with only a short
-  amount of time before it is noticed by someone. This means that:
+- ~~A breach will likely be the result of a significant effort, with only a short
+  amount of time before it is noticed by someone. This means that:~~
+  - *This is not likely to be noticed if it is in the closed source Runelite*.
   - Any malicious code will likely not target Runefoil, given that it will have
     essentially 0 users.
   - Any malicious code will be noticed before an update even occurs locally.
@@ -166,5 +167,4 @@ In addition to the security issues above, some usability issues remains:
     and launch multiple containers.
 - API server does not necessarily have all the features.
   - Feed updates do not fetch twitter/runelite updates for obvious reasons.
-  - Pricing information may be missing as the RL client caches data for an hour
-    and RL server only tries to get data from the RS API every 5 min.
+  - Pricing information may be inaccurate. It is only updated on every boot.
