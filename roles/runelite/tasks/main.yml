@@ -80,6 +80,13 @@
     owner: root
     group: root
 
+- name: setting enable-shm = no
+  lineinfile:
+    path: /etc/pulse/client.conf
+    state: present
+    regexp: 'enable-shm ='
+    line: 'enable-shm = no'
+
 - name: copy runefoil systemd service file
   copy:
     src: runefoil.service

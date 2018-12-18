@@ -64,8 +64,8 @@ def run():
   custom_env = {}
   custom_env["RUNELITE_API_BASE"] = "http://localhost:8080/runelite-"
   custom_env["RUNELITE_WS_BASE"] = "wss://localhost:8080/runelite-"
-  custom_env["RUNELITE_STATIC_BASE"] = "https://localhost:8081"
-  custom_env["PULSE_SERVER"] = network_sentry._get_default_gateway_linux()
+  custom_env["RUNELITE_STATIC_BASE"] = "http://localhost:8081"
+  custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"
 
   gpu_driver_paths = []
   for path in GPU_DRIVER_PATHS:
@@ -74,7 +74,7 @@ def run():
 
   custom_env["LD_LIBRARY_PATH"] = ":".join(gpu_driver_paths)
 
-  logging.info("Starting runelite via runefoil with environment: {}".format(custom_env))
+  logging.info("Runefoil Custom ENV: {}".format(custom_env))
   os.environ.update(custom_env)
 
   # https://github.com/runelite/static.runelite.net/blob/a8a19d47521a6e9d00c4eb449405697021d175b8/bootstrap.json#L17-L23
@@ -88,14 +88,17 @@ def run():
     "-XX:+UseParNewGC",
     "-Djna.nosys=true",
     "-Dsun.java2d.noddraw=true",
-    "-jar",
-    os.path.basename(c.RL_JAR_PATH),
   ]
 
   # Maybe required in intel GPUs
   # See https://github.com/runelite/runelite/issues/2889
   if not OPENGL_DISABLED:
     args.append("-Dsun.java2d.opengl=true")
+
+  args.append("-jar")
+  args.append(c.RL_JAR_PATH)
+
+  logging.info("Runefoil args: {}".format(args))
 
   os.execlp("java", *args)
 
