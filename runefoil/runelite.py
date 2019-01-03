@@ -62,7 +62,7 @@ def run():
   os.chdir(dirname)
 
   custom_env = {}
-  custom_env["RUNELITE_API_BASE"] = "http://localhost:8080/runelite-"
+  custom_env["RUNELITE_API_BASE"] = "http://localhost:8080"
   custom_env["RUNELITE_WS_BASE"] = "wss://localhost:8080/runelite-"
   custom_env["RUNELITE_STATIC_BASE"] = "http://localhost:8081"
   custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"

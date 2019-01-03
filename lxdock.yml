@@ -21,6 +21,7 @@ shares:
   - source: runelite
     dest: /opt/runelite-forked-src
     share_properties:
+      readonly: "true"
       optional: "true"
 
   - source: ${XDG_RUNTIME_DIR}/pulse/native

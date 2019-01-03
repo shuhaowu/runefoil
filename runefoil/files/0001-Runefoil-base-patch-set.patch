@@ -1,33 +1,44 @@
-From d0370e808f4ea5f4e9f4ff7f942ba3ec2ce14fb2 Mon Sep 17 00:00:00 2001
+From da9267762159a5eda5a8111009322c232ed5dbe5 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Fri, 14 Dec 2018 18:01:22 -0500
+Date: Thu, 3 Jan 2019 09:35:01 -0500
 Subject: [PATCH] Runefoil base patch set
 
 Things done:
 
 - Allow RuneliteAPI url be configurable via environmental variables
 - Patched up Runelite HTTP Service to not crawl prices as the runefoil
-  component will do it.
+  component will do it
 ---
- .../net/runelite/http/api/RuneLiteAPI.java    | 21 +++++++--
+ .../net/runelite/http/api/RuneLiteAPI.java    | 28 ++++++++++--
  .../http/service/item/ItemService.java        | 43 ++++++-------------
- 2 files changed, 32 insertions(+), 32 deletions(-)
+ 2 files changed, 38 insertions(+), 33 deletions(-)
 
 diff --git a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-index bc67215..c7b19ec 100644
+index b23a0b991..0c6a0b1a0 100644
 --- a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
 +++ b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-@@ -71,17 +71,32 @@ public class RuneLiteAPI
+@@ -71,22 +71,42 @@ public class RuneLiteAPI
  
- 	public static HttpUrl getApiBase()
+ 	public static HttpUrl getApiRoot()
  	{
--		return HttpUrl.parse(BASE + getVersion());
+-		return HttpUrl.parse(BASE);
 +		String base = System.getenv("RUNELITE_API_BASE");
 +		if (base == null)
 +		{
 +			base = BASE;
 +		}
-+		return HttpUrl.parse(base + getVersion());
++		return HttpUrl.parse(base);
+ 	}
+ 
+ 	public static HttpUrl getApiBase()
+ 	{
+-		return HttpUrl.parse(BASE + "/runelite-" + getVersion());
++		String base = System.getenv("RUNELITE_API_BASE");
++		if (base == null)
++		{
++			base = BASE;
++		}
++		return HttpUrl.parse(base + "/runelite-" + getVersion());
  	}
  
  	public static HttpUrl getStaticBase()
@@ -54,7 +65,7 @@ index bc67215..c7b19ec 100644
  
  	public static String getVersion()
 diff --git a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
-index 67fac71..79ded56 100644
+index 67fac7188..79ded56f6 100644
 --- a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 +++ b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 @@ -88,7 +88,6 @@ public class ItemService
@@ -116,5 +127,5 @@ index 67fac71..79ded56 100644
 -
  }
 -- 
-2.19.2
+2.20.1
 
