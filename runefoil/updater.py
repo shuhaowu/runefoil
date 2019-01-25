@@ -81,7 +81,7 @@ def update_static_runelite_net_source():
 
   with chdir(c.RL_STATIC_PATH):
     system("git reset --hard HEAD")
-    system("git checkout gh-pages")
+    system("git checkout origin/gh-pages")
 
 
 def main():
