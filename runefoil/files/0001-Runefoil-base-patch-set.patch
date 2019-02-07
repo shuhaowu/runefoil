@@ -1,6 +1,6 @@
-From 2db723280983a2632316203c02507f318137e493 Mon Sep 17 00:00:00 2001
+From ab974d9e8f4653f7a28f08284c9d2ed719d2e525 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Fri, 25 Jan 2019 09:17:44 -0500
+Date: Thu, 7 Feb 2019 13:22:00 -0500
 Subject: [PATCH] Runefoil base patch set
 
 Things done:
@@ -14,10 +14,10 @@ Things done:
  2 files changed, 38 insertions(+), 41 deletions(-)
 
 diff --git a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-index 49387a233..6c92767ce 100644
+index 3dee9272d..b36426826 100644
 --- a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
 +++ b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-@@ -91,22 +91,42 @@ public class RuneLiteAPI
+@@ -97,22 +97,42 @@ public class RuneLiteAPI
  
  	public static HttpUrl getApiRoot()
  	{
@@ -52,15 +52,15 @@ index 49387a233..6c92767ce 100644
 +		return HttpUrl.parse(base);
  	}
  
- 	public static String getWsEndpoint()
+ 	public static HttpUrl getWsEndpoint()
  	{
--		return WSBASE + getVersion() + "/ws";
+-		return HttpUrl.parse(WSBASE);
 +		String wsbase = System.getenv("RUNELITE_WS_BASE");
 +		if (wsbase == null)
 +		{
 +			wsbase = WSBASE;
 +		}
-+		return wsbase + getVersion() + "/ws";
++		return HttpUrl.parse(wsbase);
  	}
  
  	public static String getVersion()
