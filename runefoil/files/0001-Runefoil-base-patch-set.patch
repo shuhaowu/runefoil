@@ -1,6 +1,6 @@
-From ab974d9e8f4653f7a28f08284c9d2ed719d2e525 Mon Sep 17 00:00:00 2001
+From 779983f50dba6536b3dbb903d716eef5de05a8ba Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Thu, 7 Feb 2019 13:22:00 -0500
+Date: Thu, 21 Feb 2019 16:41:36 -0500
 Subject: [PATCH] Runefoil base patch set
 
 Things done:
@@ -9,9 +9,9 @@ Things done:
 - Patched up Runelite HTTP Service to not crawl prices as the runefoil
   component will do it
 ---
- .../net/runelite/http/api/RuneLiteAPI.java    | 28 ++++++++--
- .../http/service/item/ItemService.java        | 51 +++++--------------
- 2 files changed, 38 insertions(+), 41 deletions(-)
+ .../net/runelite/http/api/RuneLiteAPI.java    | 28 +++++++--
+ .../http/service/item/ItemService.java        | 57 +++++--------------
+ 2 files changed, 38 insertions(+), 47 deletions(-)
 
 diff --git a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
 index 3dee9272d..b36426826 100644
@@ -65,7 +65,7 @@ index 3dee9272d..b36426826 100644
  
  	public static String getVersion()
 diff --git a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
-index 2da7a5002..79ded56f6 100644
+index 32569b051..79ded56f6 100644
 --- a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 +++ b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 @@ -88,7 +88,6 @@ public class ItemService
@@ -76,7 +76,7 @@ index 2da7a5002..79ded56f6 100644
  	private final Random random = new Random();
  
  	@Autowired
-@@ -457,43 +456,21 @@ public class ItemService
+@@ -457,49 +456,21 @@ public class ItemService
  				break;
  			case ITEM:
  				fetchItem(pendingLookup.getItemId());
@@ -126,10 +126,16 @@ index 2da7a5002..79ded56f6 100644
 -	public void reloadItems() throws IOException
 -	{
 -		List<ItemDefinition> items = cacheService.getItems();
+-		if (items.isEmpty())
+-		{
+-			log.warn("Failed to load any items from cache, item price updating will be disabled");
+-		}
+-
 -		tradeableItems = items.stream()
 -			.filter(item -> item.isTradeable)
 -			.mapToInt(item -> item.id)
 -			.toArray();
+-
 -		log.debug("Loaded {} tradeable items", tradeableItems.length);
 -	}
 -
