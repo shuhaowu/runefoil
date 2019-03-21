@@ -153,7 +153,7 @@ class PriceFetcher(object):
     fetched_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for item_price in all_prices:
-      time = datetime.datetime.fromtimestamp(item_price["time"]["epochSecond"]).strftime("%Y-%m-%d %H:%M:%S")
+      time = datetime.datetime.fromtimestamp(item_price["time"]["seconds"]).strftime("%Y-%m-%d %H:%M:%S")
       args.append([
         item_price["id"],
         item_price["price"],
