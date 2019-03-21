@@ -3,6 +3,5 @@ Description=Local static.runelite.net mirror
 
 [Service]
 Type=simple
-User=btw
-Group=btw
+Environment=PYTHONUNBUFFERED=1
 ExecStart=/usr/local/bin/runefoil static

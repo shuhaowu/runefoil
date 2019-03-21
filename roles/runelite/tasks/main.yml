@@ -18,6 +18,7 @@
       - make
       - maven
       - mesa-utils
+      - mongodb
       - mysql-server
       - nftables
       - openjdk-8-jdk
@@ -61,11 +62,16 @@
     path: /var/lib/tomcat8/webapps/ROOT
     state: absent
 
-- name: disable tomcat8
+- name: disable services
   service:
-    name: tomcat8
+    name: "{{ item }}"
     enabled: false
     state: stopped
+  with_items:
+    - tomcat8
+# TODO: disable these once we can detect they're up and available for a dynamic start
+#    - mongodb
+#    - mysql
 
 - name: install runefoil
   command: pip3 install --upgrade .
