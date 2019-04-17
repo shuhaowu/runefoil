@@ -13,8 +13,11 @@ UA = "okhttp/3.7.0"
 RL_VERSION = get_local_version()
 RL_PRICES_URL = "https://api.runelite.net/runelite-{}/item/prices.json".format(RL_VERSION)
 RL_ITEM_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}"
-RS_ITEM_ICON_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_sprite.gif?id={}"
-RS_ITEM_ICON_LARGE_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_big.gif?id={}"
+# There are multiple of these, it might be better to the runelite API directly
+# RS_ITEM_ICON_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_sprite.gif?id={}"
+# RS_ITEM_ICON_LARGE_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_big.gif?id={}"
+RS_ITEM_ICON_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}/icon"
+RS_ITEM_ICON_LARGE_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}/icon/large"
 
 DB_USERNAME = "runelite"
 DB_PASSWORD = "ironmanbtw"
@@ -105,7 +108,7 @@ class PriceFetcher(object):
         raise
 
       logmethod = logging.debug
-      if i % 100 == 1:
+      if i % 50 == 1:
         logmethod = logging.info
 
       logmethod("Processed {} (id={}, progress={}/{}, indb={})".format(item_price["name"], item_price["id"], i + 1, len(all_prices), indb))
