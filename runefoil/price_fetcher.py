@@ -10,14 +10,6 @@ from . import constants as c
 from .updater import get_local_version, system
 
 UA = "okhttp/3.7.0"
-RL_VERSION = get_local_version()
-RL_PRICES_URL = "https://api.runelite.net/runelite-{}/item/prices.json".format(RL_VERSION)
-RL_ITEM_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}"
-# There are multiple of these, it might be better to the runelite API directly
-# RS_ITEM_ICON_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_sprite.gif?id={}"
-# RS_ITEM_ICON_LARGE_URL = "https://secure.runescape.com/m=itemdb_oldschool/1544700611648_obj_big.gif?id={}"
-RS_ITEM_ICON_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}/icon"
-RS_ITEM_ICON_LARGE_URL = "https://api.runelite.net/runelite-" + RL_VERSION + "/item/{}/icon/large"
 
 DB_USERNAME = "runelite"
 DB_PASSWORD = "ironmanbtw"
@@ -37,6 +29,14 @@ class PriceFetcher(object):
       cursorclass=pymysql.cursors.DictCursor
     )
 
+    rl_version = get_local_version()
+
+    self._prices_url =  "https://api.runelite.net/runelite-{}/item/prices.json".format(rl_version)
+    self._rl_item_url = "https://api.runelite.net/runelite-" + rl_version + "/item/{}"
+
+    self._rl_item_icon_url = "https://api.runelite.net/runelite-" + rl_version + "/item/{}/icon"
+    self._rl_item_icon_large_url = "https://api.runelite.net/runelite-" + rl_version + "/item/{}/icon/large"
+
   def __getattr__(self, attr):
     return getattr(self.s, attr)
 
@@ -51,7 +51,7 @@ class PriceFetcher(object):
       c.execute("SELECT COUNT(*) as cnt FROM `runelite`.`items`")
       row_count = c.fetchone()["cnt"]
 
-    r = self.get(RL_PRICES_URL)
+    r = self.get(self._prices_url)
     r.raise_for_status()
     all_prices = r.json()
 
@@ -64,7 +64,7 @@ class PriceFetcher(object):
 
   def seed(self, all_prices=None):
     if all_prices is None:
-      r = self.get(RL_PRICES_URL)
+      r = self.get(self._prices_url)
       r.raise_for_status()
       all_prices = r.json()
 
@@ -79,18 +79,18 @@ class PriceFetcher(object):
       try:
         with self.dbconn.cursor() as c:
           if not self._select_item(item_price["id"], c):
-            r = self.get(RL_ITEM_URL.format(item_price["id"]))
+            r = self.get(self._rl_item_url.format(item_price["id"]))
             r.raise_for_status()
             item = r.json()
 
-            r = self.get(RS_ITEM_ICON_URL.format(item_price["id"]))
+            r = self.get(self._rl_item_icon_url.format(item_price["id"]))
             if r.status_code == 404:
               item["icon"] = None
             else:
               r.raise_for_status()
               item["icon"] = r.content
 
-            r = self.get(RS_ITEM_ICON_LARGE_URL.format(item_price["id"]))
+            r = self.get(self._rl_item_icon_large_url.format(item_price["id"]))
             if r.status_code == 404:
               item["icon_large"] = None
             else:
@@ -172,7 +172,7 @@ class PriceFetcher(object):
 
 
 def main():
-  if RL_VERSION == "none":
+  if get_local_version() == "none":
     raise RuntimeError("must first install runelite before running this")
 
   logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.INFO)
