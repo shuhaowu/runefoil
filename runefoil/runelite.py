@@ -62,9 +62,6 @@ def run():
   os.chdir(dirname)
 
   custom_env = {}
-  custom_env["RUNELITE_API_BASE"] = "http://localhost:8080"
-  custom_env["RUNELITE_WS_BASE"] = "http://localhost:8080/ws"
-  custom_env["RUNELITE_STATIC_BASE"] = "http://localhost:8081"
   custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"
 
   gpu_driver_paths = []
@@ -91,7 +88,7 @@ def run():
     "-Drunelite.session.url=http://localhost:8080/session",
     "-Drunelite.http-service.url=http://localhost:8080/runelite-{}".format(get_local_version()),
     "-Drunelite.static.url=http://localhost:8081",
-    "-Drunelite.ws.url=https://localhost:8080/ws",
+    "-Drunelite.ws.url=http://localhost:8080/ws",
   ]
 
   # Maybe required in intel GPUs
