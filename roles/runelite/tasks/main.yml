@@ -24,6 +24,7 @@
       - openjdk-8-jdk
       - pulseaudio
       - python-mysqldb
+      - python-setuptools # https://github.com/ansible/ansible/issues/47361
       - python3-pip
       - python3-requests
       - python3-setuptools

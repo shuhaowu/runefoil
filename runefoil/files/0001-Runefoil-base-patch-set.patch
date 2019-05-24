@@ -1,71 +1,18 @@
-From 779983f50dba6536b3dbb903d716eef5de05a8ba Mon Sep 17 00:00:00 2001
+From 08f10c0d64fd06432638bc6e817424d422b2d583 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Thu, 21 Feb 2019 16:41:36 -0500
+Date: Thu, 23 May 2019 20:43:05 -0400
 Subject: [PATCH] Runefoil base patch set
 
 Things done:
 
-- Allow RuneliteAPI url be configurable via environmental variables
 - Patched up Runelite HTTP Service to not crawl prices as the runefoil
-  component will do it
+  component will do it.
 ---
- .../net/runelite/http/api/RuneLiteAPI.java    | 28 +++++++--
  .../http/service/item/ItemService.java        | 57 +++++--------------
- 2 files changed, 38 insertions(+), 47 deletions(-)
+ 1 file changed, 14 insertions(+), 43 deletions(-)
 
-diff --git a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-index 3dee9272d..b36426826 100644
---- a/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-+++ b/http-api/src/main/java/net/runelite/http/api/RuneLiteAPI.java
-@@ -97,22 +97,42 @@ public class RuneLiteAPI
- 
- 	public static HttpUrl getApiRoot()
- 	{
--		return HttpUrl.parse(BASE);
-+		String base = System.getenv("RUNELITE_API_BASE");
-+		if (base == null)
-+		{
-+			base = BASE;
-+		}
-+		return HttpUrl.parse(base);
- 	}
- 
- 	public static HttpUrl getApiBase()
- 	{
--		return HttpUrl.parse(BASE + "/runelite-" + getVersion());
-+		String base = System.getenv("RUNELITE_API_BASE");
-+		if (base == null)
-+		{
-+			base = BASE;
-+		}
-+		return HttpUrl.parse(base + "/runelite-" + getVersion());
- 	}
- 
- 	public static HttpUrl getStaticBase()
- 	{
--		return HttpUrl.parse(STATICBASE);
-+		String base = System.getenv("RUNELITE_STATIC_BASE");
-+		if (base == null)
-+		{
-+			base = STATICBASE;
-+		}
-+		return HttpUrl.parse(base);
- 	}
- 
- 	public static HttpUrl getWsEndpoint()
- 	{
--		return HttpUrl.parse(WSBASE);
-+		String wsbase = System.getenv("RUNELITE_WS_BASE");
-+		if (wsbase == null)
-+		{
-+			wsbase = WSBASE;
-+		}
-+		return HttpUrl.parse(wsbase);
- 	}
- 
- 	public static String getVersion()
 diff --git a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
-index 32569b051..79ded56f6 100644
+index 72a0fe85a..5177dc2e0 100644
 --- a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 +++ b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 @@ -88,7 +88,6 @@ public class ItemService
@@ -141,5 +88,5 @@ index 32569b051..79ded56f6 100644
 -
  }
 -- 
-2.20.1
+2.21.0
 

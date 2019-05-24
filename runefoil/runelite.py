@@ -7,7 +7,7 @@ from . import network_sentry
 from . import constants as c
 from .price_fetcher import PriceFetcher
 # TODO: move some of these methods to utils
-from .updater import update, system
+from .updater import update, system, get_local_version
 
 GPU_DRIVER_PATHS = [
   "/usr/lib/nvidia-384"
@@ -63,7 +63,7 @@ def run():
 
   custom_env = {}
   custom_env["RUNELITE_API_BASE"] = "http://localhost:8080"
-  custom_env["RUNELITE_WS_BASE"] = "https://localhost:8080/ws"
+  custom_env["RUNELITE_WS_BASE"] = "http://localhost:8080/ws"
   custom_env["RUNELITE_STATIC_BASE"] = "http://localhost:8081"
   custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"
 
@@ -88,6 +88,10 @@ def run():
     "-XX:+UseParNewGC",
     "-Djna.nosys=true",
     "-Dsun.java2d.noddraw=true",
+    "-Drunelite.session.url=http://localhost:8080/session",
+    "-Drunelite.http-service.url=http://localhost:8080/runelite-{}".format(get_local_version()),
+    "-Drunelite.static.url=http://localhost:8081",
+    "-Drunelite.ws.url=https://localhost:8080/ws",
   ]
 
   # Maybe required in intel GPUs
