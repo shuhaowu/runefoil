@@ -23,7 +23,8 @@ setup(
   version="1.0",
   description="Paranoid runelite",
   packages=find_packages(),
-  package_data={"": ["files/*"]},
+  package_data={"": ["files/*", "files/patches/*"]},
+  exclude_package_data={"": ["files/patches"]},
   cmdclass={"install": install},
   entry_points={"console_scripts": [
     "runefoil-update = runefoil.updater:main",

@@ -11,7 +11,7 @@ from . import constants as c
 
 RL_GIT_URL = "https://github.com/runelite/runelite"
 RL_STATIC_GIT_URL = "https://github.com/runelite/static.runelite.net.git"
-LOCAL_API_PATCH_FILE = os.path.join(c.FILES_PATH, "0001-Runefoil-base-patch-set.patch")
+PATCH_DIR = os.path.join(c.FILES_PATH, "patches")
 
 REPO_URL = "https://repo.runelite.net"
 BOOTSTRAP_URL = "https://raw.githubusercontent.com/runelite/static.runelite.net/gh-pages/bootstrap.json"
@@ -64,7 +64,11 @@ def download_runelite_source_if_necessary(version):
   with chdir(c.RL_SOURCE_PATH):
     system("git reset --hard HEAD")
     system("git checkout runelite-parent-{}".format(version))
-    system("git apply {}".format(LOCAL_API_PATCH_FILE))
+    patches = os.listdir(PATCH_DIR)
+    patches.sort()
+    for patch in patches:
+      patch = os.path.join(PATCH_DIR, patch)
+      system("git apply {}".format(patch))
 
 
 def compile_runelite():

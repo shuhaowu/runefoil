@@ -1,0 +1,181 @@
+From d98be84d8d3168e5810baedd6127d6c545feeeca Mon Sep 17 00:00:00 2001
+From: Shuhao Wu <shuhao@shuhaowu.com>
+Date: Sat, 25 May 2019 00:32:20 -0400
+Subject: [PATCH 2/2] Short circuit account code
+
+Since we're running a single player instance of RuneLite API server
+locally, the account feature should be usable without Google.
+
+To do this, simply short circuited all the login code and automatically
+login the player with a default account.
+---
+ .../http/service/account/AccountService.java  | 56 ++++++++++++++-----
+ .../client/account/SessionManager.java        | 37 ++++++------
+ .../runelite/client/config/ConfigManager.java |  4 ++
+ 3 files changed, 64 insertions(+), 33 deletions(-)
+
+diff --git a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
+index f9951446a..1e01dad6f 100644
+--- a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
++++ b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
+@@ -141,22 +141,52 @@ public class AccountService
+ 	@GetMapping("/login")
+ 	public OAuthResponse login(@RequestParam UUID uuid)
+ 	{
+-		State state = new State();
+-		state.setUuid(uuid);
+-		state.setApiVersion(RuneLiteAPI.getVersion());
++		// State state = new State();
++		// state.setUuid(uuid);
++		// state.setApiVersion(RuneLiteAPI.getVersion());
++
++		// OAuth20Service service = new ServiceBuilder()
++		// 	.apiKey(oauthClientId)
++		// 	.apiSecret(oauthClientSecret)
++		// 	.scope(SCOPE)
++		// 	.callback(oauthCallback)
++		// 	.state(gson.toJson(state))
++		// 	.build(GoogleApi20.instance());
++
++		// final Map<String, String> additionalParams = new HashMap<>();
++		// additionalParams.put("prompt", "select_account");
++
++		// String authorizationUrl = service.getAuthorizationUrl(additionalParams);
++
++		// PATCHED: we just immediately log the user in by copy pasting some code from the callback() method.
++		//          At some point in the future, we should probably just allow login with any UUID instead.
++		//          of tying it down, which means we might have to relogin periodically.
++		try (Connection con = sql2o.open())
++		{
++			con.createQuery("insert ignore into users (username) values (:username)")
++					.addParameter("username", "fe@ironman.btw")
++					.executeUpdate();
+ 
+-		OAuth20Service service = new ServiceBuilder()
+-			.apiKey(oauthClientId)
+-			.apiSecret(oauthClientSecret)
+-			.scope(SCOPE)
+-			.callback(oauthCallback)
+-			.state(gson.toJson(state))
+-			.build(GoogleApi20.instance());
++			UserEntry user = con.createQuery("select id from users where username = :username")
++					.addParameter("username", "fe@ironman.btw")
++					.executeAndFetchFirst(UserEntry.class);
+ 
+-		final Map<String, String> additionalParams = new HashMap<>();
+-		additionalParams.put("prompt", "select_account");
++			if (user == null)
++			{
++				logger.warn("Unable to find newly created user session");
++				return null; // that's weird
++			}
++
++			// insert session
++			con.createQuery("insert ignore into sessions (user, uuid) values (:user, :uuid)")
++					.addParameter("user", user.getId())
++					.addParameter("uuid", uuid.toString())
++					.executeUpdate();
++		}
+ 
+-		String authorizationUrl = service.getAuthorizationUrl(additionalParams);
++		// PATCHED: We still need to return an OauthResponse to keep the patch size low.
++		//          The client needs to just assume they're logged in via fe@ironman.btw
++		String authorizationUrl = "http://fe.ironmeme.invalid";
+ 
+ 		OAuthResponse lr = new OAuthResponse();
+ 		lr.setOauthUrl(authorizationUrl);
+diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
+index 6ef8c82e7..35ab18b6f 100644
+--- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
++++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
+@@ -135,27 +135,18 @@ public class SessionManager
+ 	 */
+ 	private void openSession(AccountSession session, boolean openSocket)
+ 	{
+-		// Change session on the websocket
+-		if (openSocket)
+-		{
+-			wsClient.changeSession(session.getUuid());
+-		}
+-
+ 		accountSession = session;
+ 
+-		if (session.getUsername() != null)
+-		{
+-			// Initialize config for new session
+-			// If the session isn't logged in yet, don't switch to the new config
+-			configManager.switchSession(session);
+-		}
++		// PATCHED: we neither want to connect to WebSocket as we don't need to be notified
++		//          nor do we want to use a profile specific config property because there's only one account..
++		//          So they are removed.
+ 
+ 		eventBus.post(new SessionOpen());
+ 	}
+ 
+ 	private void closeSession()
+ 	{
+-		wsClient.changeSession(null);
++		// wsClient.changeSession(null);
+ 
+ 		if (accountSession == null)
+ 		{
+@@ -177,7 +168,8 @@ public class SessionManager
+ 		accountSession = null; // No more account
+ 
+ 		// Restore config
+-		configManager.switchSession(null);
++		// PATCHED: we don't want to switch the config as we only have one account and it is pointless.
++		// configManager.switchSession(null);
+ 
+ 		eventBus.post(new SessionClose());
+ 	}
+@@ -185,7 +177,11 @@ public class SessionManager
+ 	public void login()
+ 	{
+ 		// If a session is already open, use that id. Otherwise generate a new id.
+-		UUID uuid = wsClient.getSessionId() != null ? wsClient.getSessionId() : UUID.randomUUID();
++
++		// PATCHED: Somehow, wsClient could have a session ID already on first login call?
++		//          This method should only ever be called by clicking the login button tho?
++		// UUID uuid = wsClient.getSessionId() != null ? wsClient.getSessionId() : UUID.randomUUID();
++		UUID uuid = UUID.randomUUID();
+ 		AccountClient loginClient = new AccountClient(uuid);
+ 
+ 		final OAuthResponse login;
+@@ -200,11 +196,12 @@ public class SessionManager
+ 			return;
+ 		}
+ 
+-		// Create new session
+-		openSession(new AccountSession(login.getUid(), Instant.now()), true);
+-
+-		// Navigate to login link
+-		LinkBrowser.browse(login.getOauthUrl());
++		// PATCHED: Even though the server returned the OAuth URL, it already logged us in.
++		//          We just need to assume the default username and save the session like onLoginResponse.
++		accountSession = new AccountSession(login.getUid(), Instant.now());
++		accountSession.setUsername("fe@ironman.btw");
++		openSession(accountSession, true);
++		saveSession();
+ 	}
+ 
+ 	@Subscribe
+diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
+index 87f63d382..733d9b2fd 100644
+--- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
++++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
+@@ -101,6 +101,10 @@ public class ConfigManager
+ 
+ 	public final void switchSession(AccountSession session)
+ 	{
++		if (true) {
++			return; // PATCHED: safe guard because we don't ever want to switch account sessions.
++		}
++
+ 		// Ensure existing config is saved
+ 		sendConfig();
+ 
+-- 
+2.21.0
+
