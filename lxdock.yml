@@ -30,7 +30,7 @@ shares:
 x11:
   enabled: yes
   extra_driver_paths:
-    - /usr/lib/nvidia-384
+    - /usr/lib/nvidia-418
 
 provisioning:
   - type: ansible
