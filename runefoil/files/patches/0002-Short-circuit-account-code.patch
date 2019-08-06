@@ -1,7 +1,7 @@
-From d98be84d8d3168e5810baedd6127d6c545feeeca Mon Sep 17 00:00:00 2001
+From f8c667566864bf8dcc56a70aae7a75b2b65567de Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Sat, 25 May 2019 00:32:20 -0400
-Subject: [PATCH 2/2] Short circuit account code
+Subject: [PATCH 2/3] Short circuit account code
 
 Since we're running a single player instance of RuneLite API server
 locally, the account feature should be usable without Google.
@@ -85,7 +85,7 @@ index f9951446a..1e01dad6f 100644
  		OAuthResponse lr = new OAuthResponse();
  		lr.setOauthUrl(authorizationUrl);
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-index 6ef8c82e7..35ab18b6f 100644
+index acac9a3b3..d28d0a0e9 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 @@ -135,27 +135,18 @@ public class SessionManager
@@ -162,7 +162,7 @@ index 6ef8c82e7..35ab18b6f 100644
  
  	@Subscribe
 diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-index 87f63d382..733d9b2fd 100644
+index 8ff943406..f48f6e9aa 100644
 --- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 @@ -101,6 +101,10 @@ public class ConfigManager
@@ -177,5 +177,5 @@ index 87f63d382..733d9b2fd 100644
  		sendConfig();
  
 -- 
-2.21.0
+2.22.0
 
