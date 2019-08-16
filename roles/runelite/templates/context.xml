@@ -28,6 +28,14 @@
         validationQuery="/* ping */"
 />
 
+<Resource name="mongodb/runelite"
+          auth="Container"
+          type="com.mongodb.client.MongoClient"
+          closeMethod="close"
+          factory="com.mongodb.client.MongoClientFactory"
+          singleton="true"
+          connectionString="mongodb://localhost"/>
+
 <Environment name="oauth.client-id" value="moo" type="java.lang.String"/>
 <Environment name="oauth.client-secret" value="moo" type="java.lang.String"/>
 <Environment name="minio.endpoint" value="http://127.0.0.1:9000" type="java.lang.String"/>

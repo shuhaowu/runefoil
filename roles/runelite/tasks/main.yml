@@ -42,11 +42,17 @@
     path: /usr/share/tomcat8/common
     state: directory
 
-- name: jdbc directory in tomcat
+- name: mysql connector java for tomcat
   file:
     path: /usr/share/tomcat8/common/mysql-connector-java.jar
     src: /usr/share/java/mysql-connector-java.jar
     state: link
+
+- name: mongo java driver for tomcat
+  get_url:
+    url: https://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/3.10.2/mongo-java-driver-3.10.2.jar
+    dest: /usr/share/tomcat8/common/mongo-java-driver-3.10.2.jar
+    checksum: sha256:bfeba21e18c3b63e62f3a99cf6787a5e3c0a7453a08e3dde5285e0daa2d6baca
 
 - include_vars: password.json
 
