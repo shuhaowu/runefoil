@@ -33,5 +33,5 @@ x11:
     - /usr/lib/nvidia-418
 
 provisioning:
-  - type: ansible
-    playbook: playbook.yml
+  - type: ansible_local
+    dir: provisioning

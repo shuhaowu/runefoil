@@ -1,4 +1,4 @@
-From f8c667566864bf8dcc56a70aae7a75b2b65567de Mon Sep 17 00:00:00 2001
+From f0cd777822b71107c0f77381ac75ab519234e98d Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Sat, 25 May 2019 00:32:20 -0400
 Subject: [PATCH 2/3] Short circuit account code
@@ -15,7 +15,7 @@ login the player with a default account.
  3 files changed, 64 insertions(+), 33 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
-index f9951446a..1e01dad6f 100644
+index 4f39ed00e..d78deb9a9 100644
 --- a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
 +++ b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
 @@ -141,22 +141,52 @@ public class AccountService
@@ -162,7 +162,7 @@ index acac9a3b3..d28d0a0e9 100644
  
  	@Subscribe
 diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-index 8ff943406..f48f6e9aa 100644
+index 0feb957b2..ecbdcc423 100644
 --- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 @@ -101,6 +101,10 @@ public class ConfigManager
@@ -177,5 +177,5 @@ index 8ff943406..f48f6e9aa 100644
  		sendConfig();
  
 -- 
-2.22.0
+2.24.1
 

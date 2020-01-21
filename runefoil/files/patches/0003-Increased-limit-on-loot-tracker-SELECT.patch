@@ -1,25 +1,32 @@
-From b581868085890b237c93ef812934668bb5521315 Mon Sep 17 00:00:00 2001
+From 601ecdace3005e0c5ac58bb5f97a959212cc96bb Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Mon, 5 Aug 2019 22:24:42 -0400
 Subject: [PATCH 3/3] Increased limit on loot tracker SELECT
 
 ---
- .../http/service/loottracker/LootTrackerController.java         | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../http/service/loottracker/LootTrackerController.java       | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-index 2c1bd7714..62fbdfc48 100644
+index 9b810f672..b886151a7 100644
 --- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 +++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-@@ -67,7 +67,7 @@ public class LootTrackerController
+@@ -82,7 +82,7 @@ public class LootTrackerController
  	}
  
  	@GetMapping
--	public Collection<LootRecord> getLootRecords(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "count", defaultValue = "1024") int count, @RequestParam(value = "start", defaultValue = "0") int start) throws IOException
-+	public Collection<LootRecord> getLootRecords(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "count", defaultValue = "16384") int count, @RequestParam(value = "start", defaultValue = "0") int start) throws IOException
+-	public Collection<LootAggregate> getLootAggregate(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "count", defaultValue = "1024") int count, @RequestParam(value = "start", defaultValue = "0") int start) throws IOException
++	public Collection<LootAggregate> getLootAggregate(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "count", defaultValue = "16384") int count, @RequestParam(value = "start", defaultValue = "0") int start) throws IOException
  	{
  		SessionEntry e = auth.handle(request, response);
  		if (e == null)
+@@ -107,4 +107,4 @@ public class LootTrackerController
+ 
+ 		service.delete(e.getUser(), eventId);
+ 	}
+-}
+\ No newline at end of file
++}
 -- 
-2.22.0
+2.24.1
 
