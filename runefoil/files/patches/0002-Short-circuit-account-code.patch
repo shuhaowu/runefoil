@@ -1,7 +1,7 @@
-From f0cd777822b71107c0f77381ac75ab519234e98d Mon Sep 17 00:00:00 2001
+From bf55a2e9ff60ce7229edc1b56fcf5f4d98341c5b Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Sat, 25 May 2019 00:32:20 -0400
-Subject: [PATCH 2/3] Short circuit account code
+Subject: [PATCH 2/4] Short circuit account code
 
 Since we're running a single player instance of RuneLite API server
 locally, the account feature should be usable without Google.
@@ -85,7 +85,7 @@ index 4f39ed00e..d78deb9a9 100644
  		OAuthResponse lr = new OAuthResponse();
  		lr.setOauthUrl(authorizationUrl);
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-index acac9a3b3..d28d0a0e9 100644
+index acac9a3b3..b37dfc5f3 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 @@ -135,27 +135,18 @@ public class SessionManager
@@ -139,7 +139,7 @@ index acac9a3b3..d28d0a0e9 100644
 +		// PATCHED: Somehow, wsClient could have a session ID already on first login call?
 +		//          This method should only ever be called by clicking the login button tho?
 +		// UUID uuid = wsClient.getSessionId() != null ? wsClient.getSessionId() : UUID.randomUUID();
-+		UUID uuid = UUID.randomUUID();
++		UUID uuid = UUID.fromString("17999f5c-3e5b-11ea-b77f-2e728ce88125");
  		AccountClient loginClient = new AccountClient(uuid);
  
  		final OAuthResponse login;

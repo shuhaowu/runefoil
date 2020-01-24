@@ -1,11 +1,13 @@
-From 601ecdace3005e0c5ac58bb5f97a959212cc96bb Mon Sep 17 00:00:00 2001
+From 57f35580685a988947ff80f46bc6a7e115ece64b Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Mon, 5 Aug 2019 22:24:42 -0400
-Subject: [PATCH 3/3] Increased limit on loot tracker SELECT
+Subject: [PATCH 3/4] Increased limit on loot tracker SELECT
 
+Also immediately submit loot on drop instead of waiting for 5 min.
 ---
  .../http/service/loottracker/LootTrackerController.java       | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../client/plugins/loottracker/LootTrackerPlugin.java         | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 index 9b810f672..b886151a7 100644
@@ -27,6 +29,20 @@ index 9b810f672..b886151a7 100644
 -}
 \ No newline at end of file
 +}
+diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
+index adb5217a4..cee588360 100644
+--- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
++++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
+@@ -336,6 +336,9 @@ public class LootTrackerPlugin extends Plugin
+ 			{
+ 				queuedLoots.add(lootRecord);
+ 			}
++
++			// PATCHED: We can just immediately submit it because don't need the rate limiting locally
++			submitLoot();
+ 		}
+ 
+ 		eventBus.post(new LootReceived(name, combatLevel, type, items));
 -- 
 2.24.1
 
