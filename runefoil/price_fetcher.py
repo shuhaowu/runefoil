@@ -4,7 +4,6 @@ import os
 import pymysql
 import requests
 import sys
-import time
 
 from . import constants as c
 from .updater import get_local_version, system
@@ -31,11 +30,7 @@ class PriceFetcher(object):
 
     rl_version = get_local_version()
 
-    self._prices_url =  "https://api.runelite.net/runelite-{}/item/prices.json".format(rl_version)
-    self._rl_item_url = "https://api.runelite.net/runelite-" + rl_version + "/item/{}"
-
-    self._rl_item_icon_url = "https://api.runelite.net/runelite-" + rl_version + "/item/{}/icon"
-    self._rl_item_icon_large_url = "https://api.runelite.net/runelite-" + rl_version + "/item/{}/icon/large"
+    self._prices_url = "https://api.runelite.net/runelite-{}/item/prices.json".format(rl_version)
 
   def __getattr__(self, attr):
     return getattr(self.s, attr)
@@ -68,8 +63,6 @@ class PriceFetcher(object):
       r.raise_for_status()
       all_prices = r.json()
 
-    last_processed = datetime.datetime.now()
-
     not_indb_count = 0
     indb_count = 0
 
@@ -79,23 +72,11 @@ class PriceFetcher(object):
       try:
         with self.dbconn.cursor() as c:
           if not self._select_item(item_price["id"], c):
-            r = self.get(self._rl_item_url.format(item_price["id"]))
-            r.raise_for_status()
-            item = r.json()
-
-            r = self.get(self._rl_item_icon_url.format(item_price["id"]))
-            if r.status_code == 404:
-              item["icon"] = None
-            else:
-              r.raise_for_status()
-              item["icon"] = r.content
-
-            r = self.get(self._rl_item_icon_large_url.format(item_price["id"]))
-            if r.status_code == 404:
-              item["icon_large"] = None
-            else:
-              r.raise_for_status()
-              item["icon_large"] = r.content
+            item = {
+              "id": item_price["id"],
+              "name": item_price["name"],
+              "description": "not implemented",
+            }
 
             self._insert_item(item, c)
             indb = False
@@ -115,10 +96,6 @@ class PriceFetcher(object):
 
       if not indb:
         self.dbconn.commit()
-        while (datetime.datetime.now() - last_processed).total_seconds() < self.rate_limit:
-          time.sleep(0.02)
-
-      last_processed = datetime.datetime.now()
 
     logging.info("items table seeded with {} items added to db and {} existing items".format(not_indb_count, indb_count))
 
@@ -136,9 +113,7 @@ class PriceFetcher(object):
       ("id", "%s", item["id"]),
       ("name", "%s", item["name"]),
       ("description", "%s", item["description"]),
-      ("type", "%s", item["type"].upper()),
-      ("icon", "%s", None if item["icon"] is None else pymysql.Binary(item["icon"])),
-      ("icon_large", "%s", None if item["icon_large"] is None else pymysql.Binary(item["icon_large"])),
+      ("type", "%s", "DEFAULT"),
     ]
 
     columns, subs, args = zip(*data)
