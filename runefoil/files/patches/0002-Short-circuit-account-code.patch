@@ -1,6 +1,6 @@
-From bf55a2e9ff60ce7229edc1b56fcf5f4d98341c5b Mon Sep 17 00:00:00 2001
+From b810c431cebc157209bd8ab4d64a5f0b2341e353 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Sat, 25 May 2019 00:32:20 -0400
+Date: Fri, 17 Jul 2020 21:06:26 -0400
 Subject: [PATCH 2/4] Short circuit account code
 
 Since we're running a single player instance of RuneLite API server
@@ -10,9 +10,9 @@ To do this, simply short circuited all the login code and automatically
 login the player with a default account.
 ---
  .../http/service/account/AccountService.java  | 56 ++++++++++++++-----
- .../client/account/SessionManager.java        | 37 ++++++------
+ .../client/account/SessionManager.java        | 36 ++++++------
  .../runelite/client/config/ConfigManager.java |  4 ++
- 3 files changed, 64 insertions(+), 33 deletions(-)
+ 3 files changed, 63 insertions(+), 33 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
 index 4f39ed00e..d78deb9a9 100644
@@ -85,10 +85,10 @@ index 4f39ed00e..d78deb9a9 100644
  		OAuthResponse lr = new OAuthResponse();
  		lr.setOauthUrl(authorizationUrl);
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-index acac9a3b3..b37dfc5f3 100644
+index 3f754b5e4..7623b26a3 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-@@ -135,27 +135,18 @@ public class SessionManager
+@@ -144,27 +144,18 @@ public class SessionManager
  	 */
  	private void openSession(AccountSession session, boolean openSocket)
  	{
@@ -120,7 +120,7 @@ index acac9a3b3..b37dfc5f3 100644
  
  		if (accountSession == null)
  		{
-@@ -177,7 +168,8 @@ public class SessionManager
+@@ -186,7 +177,8 @@ public class SessionManager
  		accountSession = null; // No more account
  
  		// Restore config
@@ -130,20 +130,19 @@ index acac9a3b3..b37dfc5f3 100644
  
  		eventBus.post(new SessionClose());
  	}
-@@ -185,7 +177,11 @@ public class SessionManager
+@@ -194,7 +186,10 @@ public class SessionManager
  	public void login()
  	{
  		// If a session is already open, use that id. Otherwise generate a new id.
 -		UUID uuid = wsClient.getSessionId() != null ? wsClient.getSessionId() : UUID.randomUUID();
-+
 +		// PATCHED: Somehow, wsClient could have a session ID already on first login call?
 +		//          This method should only ever be called by clicking the login button tho?
 +		// UUID uuid = wsClient.getSessionId() != null ? wsClient.getSessionId() : UUID.randomUUID();
 +		UUID uuid = UUID.fromString("17999f5c-3e5b-11ea-b77f-2e728ce88125");
- 		AccountClient loginClient = new AccountClient(uuid);
+ 		accountClient.setUuid(uuid);
  
  		final OAuthResponse login;
-@@ -200,11 +196,12 @@ public class SessionManager
+@@ -209,11 +204,12 @@ public class SessionManager
  			return;
  		}
  
@@ -162,10 +161,10 @@ index acac9a3b3..b37dfc5f3 100644
  
  	@Subscribe
 diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-index 0feb957b2..ecbdcc423 100644
+index 3842fd96a..b268e4235 100644
 --- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-@@ -101,6 +101,10 @@ public class ConfigManager
+@@ -115,6 +115,10 @@ public class ConfigManager
  
  	public final void switchSession(AccountSession session)
  	{
@@ -177,5 +176,5 @@ index 0feb957b2..ecbdcc423 100644
  		sendConfig();
  
 -- 
-2.24.1
+2.25.1
 

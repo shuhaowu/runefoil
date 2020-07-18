@@ -1,4 +1,4 @@
-From d03174b5d618952e18604c0458ab914a7cd23ee2 Mon Sep 17 00:00:00 2001
+From a4c255e7598cd42159dafe7b3ce88156c3daad03 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Thu, 23 Jan 2020 23:10:37 -0500
 Subject: [PATCH 4/4] Revert "loot controller: publish loot to redis"
@@ -102,5 +102,5 @@ index ddfac3e37..ccf7ab760 100644
  
  	@Test
 -- 
-2.24.1
+2.25.1
 
