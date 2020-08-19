@@ -10,7 +10,9 @@ from .price_fetcher import PriceFetcher
 from .updater import update, system, get_local_version
 
 GPU_DRIVER_PATHS = [
-  "/usr/lib/nvidia-418"
+  "/usr/lib/nvidia-418",
+  "/usr/lib/x86_64-linux-gnu",
+  "/usr/lib/i386-linux-gnu",
 ]
 
 OPENGL_DISABLED = os.path.exists(c.RL_GL_DISABLE_PATH)
