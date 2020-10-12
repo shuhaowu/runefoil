@@ -1,4 +1,4 @@
-From 0b145e1e52b2d806113d1c39b16d024d8abdc26b Mon Sep 17 00:00:00 2001
+From 8ee9b09f162420799eead1e0aa10a954643a84f5 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Mon, 5 Aug 2019 22:24:42 -0400
 Subject: [PATCH 3/4] Increased limit on loot tracker SELECT
@@ -10,10 +10,10 @@ Also immediately submit loot on drop instead of waiting for 5 min.
  2 files changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-index 9b810f672..b886151a7 100644
+index ef39ac0d5..8d09094e8 100644
 --- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 +++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-@@ -82,7 +82,7 @@ public class LootTrackerController
+@@ -90,7 +90,7 @@ public class LootTrackerController
  	}
  
  	@GetMapping
@@ -22,7 +22,7 @@ index 9b810f672..b886151a7 100644
  	{
  		SessionEntry e = auth.handle(request, response);
  		if (e == null)
-@@ -107,4 +107,4 @@ public class LootTrackerController
+@@ -115,4 +115,4 @@ public class LootTrackerController
  
  		service.delete(e.getUser(), eventId);
  	}
@@ -30,10 +30,10 @@ index 9b810f672..b886151a7 100644
 \ No newline at end of file
 +}
 diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-index de4f6c1ed..532651ed7 100644
+index ed085b081..db8acb8fd 100644
 --- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
 +++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-@@ -427,6 +427,9 @@ public class LootTrackerPlugin extends Plugin
+@@ -459,6 +459,9 @@ public class LootTrackerPlugin extends Plugin
  			{
  				queuedLoots.add(lootRecord);
  			}
