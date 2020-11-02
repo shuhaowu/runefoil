@@ -12,7 +12,7 @@ RUN set -xe; \
     wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -; \
     add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
     apt-get -y install \
-      adoptopenjdk-8-hotspot \
+      adoptopenjdk-11-hotspot \
       git \
       make \
       maven \

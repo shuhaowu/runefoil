@@ -1,0 +1,19 @@
+---
+version: "3.8"
+services:
+  main:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        - uid=${UID}
+        - gid=${GID}
+    volumes:
+      - ./shared/runelite:/opt/runelite-src
+    user: "root:root"
+    environment:
+      - "DISPLAY"
+    devices:
+      - /dev/dri
+    init: true
+    command: ["sleep", "infinity"]
