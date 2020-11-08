@@ -3,17 +3,21 @@ version: "3.8"
 services:
   main:
     build:
-      context: .
-      dockerfile: ./docker/Dockerfile
+      context: ./docker
+      dockerfile: Dockerfile
       args:
         - uid=${UID}
         - gid=${GID}
     volumes:
-      - ./shared/runelite:/opt/runelite-src
+      - .:/opt/runefoil:ro
+      - ${HOME}/.config/pulse/cookie:/tmp/pulse.cookie
+      - ${XDG_RUNTIME_DIR}/pulse:/tmp/pulse
     user: "root:root"
     environment:
       - "DISPLAY"
+      - PULSE_SERVER=/tmp/pulse/native
+      - PULSE_COOKIE=/tmp/pulse.cookie
     devices:
       - /dev/dri
     init: true
-    command: ["sleep", "infinity"]
+    command: ["/usr/bin/supervisord"]
