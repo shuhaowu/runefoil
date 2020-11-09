@@ -1,0 +1,48 @@
+From 8ee9b09f162420799eead1e0aa10a954643a84f5 Mon Sep 17 00:00:00 2001
+From: Shuhao Wu <shuhao@shuhaowu.com>
+Date: Mon, 5 Aug 2019 22:24:42 -0400
+Subject: [PATCH 3/4] Increased limit on loot tracker SELECT
+
+Also immediately submit loot on drop instead of waiting for 5 min.
+---
+ .../http/service/loottracker/LootTrackerController.java       | 4 ++--
+ .../client/plugins/loottracker/LootTrackerPlugin.java         | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
+index ef39ac0d5..8d09094e8 100644
+--- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
++++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
+@@ -90,7 +90,7 @@ public class LootTrackerController
+ 	}
+ 
+ 	@GetMapping
+-	public Collection<LootAggregate> getLootAggregate(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "count", defaultValue = "1024") int count, @RequestParam(value = "start", defaultValue = "0") int start) throws IOException
++	public Collection<LootAggregate> getLootAggregate(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "count", defaultValue = "16384") int count, @RequestParam(value = "start", defaultValue = "0") int start) throws IOException
+ 	{
+ 		SessionEntry e = auth.handle(request, response);
+ 		if (e == null)
+@@ -115,4 +115,4 @@ public class LootTrackerController
+ 
+ 		service.delete(e.getUser(), eventId);
+ 	}
+-}
+\ No newline at end of file
++}
+diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
+index ed085b081..db8acb8fd 100644
+--- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
++++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
+@@ -459,6 +459,9 @@ public class LootTrackerPlugin extends Plugin
+ 			{
+ 				queuedLoots.add(lootRecord);
+ 			}
++
++			// PATCHED: We can just immediately submit it because don't need the rate limiting locally
++			submitLoot();
+ 		}
+ 
+ 		eventBus.post(new LootReceived(name, combatLevel, type, items));
+-- 
+2.25.1
+

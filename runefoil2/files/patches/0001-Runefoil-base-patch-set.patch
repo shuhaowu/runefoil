@@ -1,0 +1,60 @@
+From a73bba26b3442db1093f2efc6a6c592de1ae8a10 Mon Sep 17 00:00:00 2001
+From: Shuhao Wu <shuhao@shuhaowu.com>
+Date: Thu, 23 Apr 2020 23:04:20 -0400
+Subject: [PATCH 1/4] Runefoil base patch set
+
+Things done:
+
+- Patched up Runelite HTTP Service to not crawl prices as the runefoil
+  component will do it.
+---
+ .../http/service/item/ItemService.java        | 35 -------------------
+ 1 file changed, 35 deletions(-)
+
+diff --git a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
+index bf40d8ec9..798014173 100644
+--- a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
++++ b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
+@@ -305,39 +305,4 @@ public class ItemService
+ 			throw new IOException(ex);
+ 		}
+ 	}
+-
+-	@Scheduled(fixedDelay = 20_000)
+-	public void crawlPrices()
+-	{
+-		if (tradeableItems == null || tradeableItems.length == 0)
+-		{
+-			return;
+-		}
+-
+-		int idx = random.nextInt(tradeableItems.length);
+-		int id = tradeableItems[idx];
+-
+-		log.debug("Fetching price for {}", id);
+-
+-		// check if the item name or description has changed
+-		fetchItem(id);
+-		fetchPrice(id);
+-	}
+-
+-	@Scheduled(fixedDelay = 1_8000_000) // 30 minutes
+-	public void reloadItems() throws IOException
+-	{
+-		List<ItemDefinition> items = cacheService.getItems();
+-		if (items.isEmpty())
+-		{
+-			log.warn("Failed to load any items from cache, item price updating will be disabled");
+-		}
+-
+-		tradeableItems = items.stream()
+-			.filter(ItemDefinition::isTradeable)
+-			.mapToInt(ItemDefinition::getId)
+-			.toArray();
+-
+-		log.debug("Loaded {} tradeable items", tradeableItems.length);
+-	}
+ }
+-- 
+2.25.1
+

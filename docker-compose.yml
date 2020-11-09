@@ -12,6 +12,7 @@ services:
       - .:/opt/runefoil:ro
       - ${HOME}/.config/pulse/cookie:/tmp/pulse.cookie
       - ${XDG_RUNTIME_DIR}/pulse:/tmp/pulse
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
     user: "root:root"
     environment:
       - "DISPLAY"
@@ -21,3 +22,16 @@ services:
       - /dev/dri
     init: true
     command: ["/usr/bin/supervisord"]
+  mysql:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.mysql
+    command:
+      - "--plugin-dir=/opt/runelite-mysql"
+      - "--sql_mode=NO_ENGINE_SUBSTITUTION"
+    restart: always
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+  mongodb:
+    image: mongo:3.6
+    restart: always

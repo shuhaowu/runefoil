@@ -20,6 +20,8 @@ RUN set -xe; \
       pulseaudio \
       nftables \
       mesa-utils \
+      python3-setuptools \
+      python3-requests \
       x11-apps \
       git \
       make \
@@ -36,10 +38,22 @@ RUN set -xe; \
     chown -R root:$TOMCAT_USER /opt/tomcat8; \
     chmod 0750 /opt/tomcat8/conf; \
     chmod 0640 /opt/tomcat8/conf/*; \
+    rm -rf /opt/tomcat8/webapps/*; \
     chown -R $TOMCAT_USER:$TOMCAT_USER /opt/tomcat8/webapps /opt/tomcat8/work /opt/tomcat8/temp /opt/tomcat8/logs; \
-    apt-get purge -y --autoremove wget gnupg software-properties-common; \
+    cd /opt/tomcat8/lib; \
+    # Installing required tomcat plugins
+    wget https://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/3.10.2/mongo-java-driver-3.10.2.jar; \
+    echo "bfeba21e18c3b63e62f3a99cf6787a5e3c0a7453a08e3dde5285e0daa2d6baca mongo-java-driver-3.10.2.jar" | sha256sum --strict --check -; \
+    wget https://downloads.mariadb.com/Connectors/java/connector-java-2.2.3/mariadb-java-client-2.2.3.jar; \
+    echo "f367db6535798fdc990a183197d6e8ec5b4a170877e9a9f9084376d66cf2acbb  mariadb-java-client-2.2.3.jar" | sha256sum --strict --check -; \
+    chown root:tomcat *; \
+    chmod 0640 *; \
+    apt-get purge -y --autoremove gnupg software-properties-common; \
     apt-get clean; \
     rm /var/lib/apt/list/* -rf; \
+    rm /opt/tomcat8/conf/context.xml; \
     rm /tmp/* -rf;
 
 COPY supervisord.conf /etc/supervisord.conf
+COPY custom.sh /etc/profile.d/custom.sh
+COPY context.xml /opt/tomcat8/conf/context.xml

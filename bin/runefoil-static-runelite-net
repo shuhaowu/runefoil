@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+# To get around issues where setup.py doesn't work
+import sys
+sys.path.append("/opt/runefoil")
+
+import os
+import http.server
+import socketserver
+from runefoil2.constants import RL_STATIC_PATH
+
+os.chdir(RL_STATIC_PATH)
+httpd = socketserver.TCPServer(("", 8081), http.server.SimpleHTTPRequestHandler)
+try:
+  httpd.serve_forever()
+finally:
+  print("shutting down")
+  httpd.server_close()
