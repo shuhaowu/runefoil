@@ -19,7 +19,7 @@ def main():
     runelite.move_compiled_artifact_to_final_positions(remote_version)
     runelite.record_local_version(remote_version)
 
-  price_fetcher.fetch_latest_information_from_internet()
+  price_fetcher.fetch_latest_information_from_internet(remote_version)
   network.disable_internet()
 
   runelite.start_all_services()

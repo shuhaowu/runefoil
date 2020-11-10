@@ -165,6 +165,31 @@ CREATE TABLE IF NOT EXISTS `runelite-tracker`.`xp` (
   CONSTRAINT `fk_player` FOREIGN KEY (`player`) REFERENCES `player` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Table from
+-- https://github.com/runelite/runelite/blob/9c81e9b509a71c98c979767bab55cff9fb0fbee3/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
+-- Needed because we need to create the items and prices table so they can be populated
+-- on first setup.
+--
+
+CREATE TABLE IF NOT EXISTS `runelite`.`items` (
+  `id` int(11) NOT NULL,
+  `name` tinytext NOT NULL,
+  `description` tinytext NOT NULL,
+  `type` enum('DEFAULT') NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `runelite`.`prices` (
+  `item` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `fetched_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  UNIQUE KEY `item_time` (`item`,`time`),
+  KEY `item_fetched_time` (`item`,`fetched_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE USER IF NOT EXISTS 'runelite'@'%' IDENTIFIED BY 'ironmanbtw';
 GRANT ALL ON `runelite`.* TO 'runelite'@'%';
 GRANT ALL ON `runelite-tracker`.* TO 'runelite'@'%';

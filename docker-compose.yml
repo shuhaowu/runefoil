@@ -32,8 +32,12 @@ services:
       - "--plugin-dir=/opt/runelite-mysql"
       - "--sql_mode=NO_ENGINE_SUBSTITUTION"
     restart: always
+    volumes:
+      - runelite-mysql-data:/var/lib/mysql
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
   mongodb:
     image: mongo:3.6
     restart: always
+volumes:
+  runelite-mysql-data:

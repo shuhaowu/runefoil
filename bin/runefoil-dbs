@@ -6,20 +6,21 @@ sys.path.append("/opt/runefoil")
 
 import argparse
 import logging
-from runefoil2 import price_fetcher
+from runefoil2 import price_fetcher, runelite
 
 logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.INFO)
 
 
 logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.DEBUG)
 parser = argparse.ArgumentParser(description="runelite database actions")
-parser.add_argument("--rate-limit", type=int, default=1, help="rate limit between subsequent requests")
 parser.add_argument("action", choices=["seed", "restore", "update"])
 args = parser.parse_args()
 
+_, remote_version = runelite.check_for_update()
+
 if args.action == "seed":
-  price_fetcher.seed_data_from_internet(args.rate_limit)
+  price_fetcher.seed_data_from_internet(remote_version)
 elif args.action == "restore":
   price_fetcher.restore_data_from_dump()
-elif args.action == "action":
-  price_fetcher.fetch_latest_information_from_internet()
+elif args.action == "update":
+  price_fetcher.fetch_latest_information_from_internet(remote_version)
