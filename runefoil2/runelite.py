@@ -115,7 +115,46 @@ def run_with_post_stop_hook():
 
 def run():
   logging.info("starting runelite")
-  time.sleep(1000000)
+  dirname = os.path.dirname(constants.RL_JAR_PATH)
+  os.chdir(dirname)
+
+  custom_env = {}
+  custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"
+
+  logging.info("Runefoil Custom ENV: {}".format(custom_env))
+  os.environ.update(custom_env)
+
+  # https://github.com/runelite/static.runelite.net/blob/1.6.30/bootstrap.json#L252-L258
+  args = [
+    "sudo",
+    "-Eu",
+    "btw",
+    "java",
+    "-Xmx512m",
+    "-Xss2m",
+    "-XX:CompileThreshold=1500",
+    "-XX:+DisableAttachMechanism",
+    "-Djna.nosys=true",
+    # Linux? https://github.com/runelite/launcher/blob/27c82f85743b759c8fc46cd752a7c11d2f24a28e/src/main/java/net/runelite/launcher/Launcher.java#L125-L128
+    # https://github.com/runelite/launcher/blob/9e2064aad88c16dae5370cbf36dd752e8e45d3df/src/main/java/net/runelite/launcher/HardwareAccelerationMode.java#L57-L60
+    "-Dsun.java2d.noddraw=true",
+    "-Drunelite.session.url=http://localhost:8080/session",
+    "-Drunelite.http-service.url=http://localhost:8080/runelite-{}".format(_get_local_version()),
+    "-Drunelite.static.url=http://localhost:8081",
+    "-Drunelite.ws.url=http://localhost:8080/ws",
+  ]
+
+  # Maybe required in intel GPUs
+  # See https://github.com/runelite/runelite/issues/2889
+  if not os.path.exists(constants.OPENGL_DISABLED_PATH):
+    args.append("-Dsun.java2d.opengl=true")
+
+  args.append("-jar")
+  args.append(constants.RL_JAR_PATH)
+
+  logging.info("Runelite args: {}".format(args))
+  subprocess.run(args)
+  logging.info("Runelite stopped")
 
 
 def _supervisorctl():

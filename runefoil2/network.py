@@ -187,4 +187,7 @@ def _allowed_hostnames_to_ips():
   hostnames.append("www.runescape.com")
   hostnames.append("services.runescape.com")
   hostnames.append("secure.runescape.com")
+  # The other two containers...
+  hostnames.append("mysql")
+  hostnames.append("mongodb")
   return _get_ips(hostnames)

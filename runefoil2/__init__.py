@@ -1,3 +1,5 @@
+import time
+
 from . import network, runelite, price_fetcher, system
 
 
@@ -12,6 +14,7 @@ def main():
   runelite.stop_all_services()
   runelite.terminate_stray_applications()
   network.enable_internet()
+  time.sleep(0.1)  # seems to take a moments to take effect
   local_version, remote_version = runelite.check_for_update()
   if remote_version != local_version:
     runelite.update_and_patch_source_code(remote_version)
