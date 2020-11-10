@@ -62,10 +62,10 @@ def update_and_patch_source_code(version):
   with chdir(constants.RL_SOURCE_PATH):
     system("git reset --hard HEAD")
     system("git checkout runelite-parent-{}".format(version))
-    patches = os.listdir(constants.PATCH_DIR)
+    patches = os.listdir(constants.PATCHES_PATH)
     patches.sort()
     for patch in patches:
-      patch = os.path.join(constants.PATCH_DIR, patch)
+      patch = os.path.join(constants.PATCHES_PATH, patch)
       system("git apply {}".format(patch))
 
   # static.runelite.net source code

@@ -22,5 +22,5 @@
 
 As a note, systemd has ExecStartPre (0-7), ExecStart (8), and ExecStopPost (9).
 This is not available in supervisord, so we need to reinvent a process manager
-in code for docker.
+in code for docker. Also need to perform user switching.
 

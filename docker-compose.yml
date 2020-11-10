@@ -8,6 +8,8 @@ services:
       args:
         - uid=${UID}
         - gid=${GID}
+    cap_add:
+      - NET_ADMIN
     volumes:
       - .:/opt/runefoil:ro
       - ${HOME}/.config/pulse/cookie:/tmp/pulse.cookie

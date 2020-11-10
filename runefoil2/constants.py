@@ -13,4 +13,4 @@ GDK_SCALE_PATH = os.path.join(RUNEFOIL_BASEDIR, "shared", "gdk-scale")
 
 TOMCAT_WEBAPP_DIR = "/opt/tomcat8/webapps"
 FILES_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "files")
-PATCH_DIR = os.path.join(FILES_PATH, "patches")
+PATCHES_PATH = os.path.join(FILES_PATH, "patches")

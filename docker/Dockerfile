@@ -22,7 +22,10 @@ RUN set -xe; \
       mesa-utils \
       python3-setuptools \
       python3-requests \
+      python3-mysqldb \
       x11-apps \
+      iproute2 \
+      sudo \
       git \
       make \
       maven \
