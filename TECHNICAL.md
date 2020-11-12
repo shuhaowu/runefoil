@@ -35,7 +35,8 @@ the HTTP service. I was unable to figure out how to get it to run standalone.
 Performed by nftables within the container before and after runelite execution.
 We get all the worlds via Jagex's proprietary API and then translates the
 hostnames into IP addresses we are allowed to contact. We also allow
-connectivity to the MySQL and MongoDB containers.
+connectivity to the MySQL and MongoDB containers. Dropped packets are logged
+via ulogd to /var/log/ulog/syslogemu.log.
 
 The MySQL container has similar restrictions, as it also runs foreign code.
 MongoDB is not subject to restrictions, tho.
@@ -47,3 +48,11 @@ MongoDB is not subject to restrictions, tho.
   - The container is also built with some initial table creation code, which is
     cherry-picked from runelite and may become out of sync.
 - MongoDB just runs normally as its own container.
+
+## Devices
+
+GPU is shared into the container. In order to not use nvidia's docker thing and
+be generic, regular docker is used and we detect/install nvidia drivers every
+time it is launched.
+
+Sound is setup via pulseaduio by forwarding the pulse audio unix socket and cookie into the container via https://github.com/mviereck/x11docker/wiki/Container-sound:-ALSA-or-Pulseaudio#pulseaudio-as-system-wide-daemon

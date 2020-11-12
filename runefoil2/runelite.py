@@ -118,7 +118,8 @@ def run():
   os.chdir(dirname)
 
   custom_env = {}
-  custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"
+  custom_env["PULSE_SERVER"] = "unix:/tmp/pulse/native"
+  custom_env["PULSE_COOKIE"] = "/tmp/pulse.cookie"
 
   if os.path.exists(constants.GDK_SCALE_PATH):
     with open(constants.GDK_SCALE_PATH) as f:
