@@ -5,7 +5,6 @@ import subprocess
 import supervisor.xmlrpc
 import shutil
 import xmlrpc.client
-import time
 import pwd
 import grp
 
@@ -121,6 +120,11 @@ def run():
   custom_env = {}
   custom_env["PULSE_SERVER"] = "unix:/tmp/.pulse-native"
 
+  if os.path.exists(constants.GDK_SCALE_PATH):
+    with open(constants.GDK_SCALE_PATH) as f:
+      custom_env["GDK_SCALE"] = f.read().strip()
+      logging.info("setting GDK_SCALE = {}".format(custom_env["GDK_SCALE"]))
+
   logging.info("Runefoil Custom ENV: {}".format(custom_env))
   os.environ.update(custom_env)
 
@@ -135,6 +139,7 @@ def run():
     "-XX:CompileThreshold=1500",
     "-XX:+DisableAttachMechanism",
     "-Djna.nosys=true",
+    "-Duser.home=/data/jagexcache",  # This will put jagexcache somewhere else, allowing it to be saved between container recreations
     # Linux? https://github.com/runelite/launcher/blob/27c82f85743b759c8fc46cd752a7c11d2f24a28e/src/main/java/net/runelite/launcher/Launcher.java#L125-L128
     # https://github.com/runelite/launcher/blob/9e2064aad88c16dae5370cbf36dd752e8e45d3df/src/main/java/net/runelite/launcher/HardwareAccelerationMode.java#L57-L60
     "-Dsun.java2d.noddraw=true",

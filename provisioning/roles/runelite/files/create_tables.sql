@@ -91,8 +91,11 @@ CREATE TABLE IF NOT EXISTS `runelite-tracker`.`player` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `tracked_since` timestamp NOT NULL DEFAULT current_timestamp(),
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `rank` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
+
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `runelite-tracker`.`xp` (
@@ -173,5 +176,6 @@ CREATE TABLE IF NOT EXISTS `runelite-tracker`.`xp` (
   `overall_rank` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `player_time` (`player`,`time`),
+  KEY `idx_time` (`time`),
   CONSTRAINT `fk_player` FOREIGN KEY (`player`) REFERENCES `player` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

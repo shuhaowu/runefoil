@@ -25,6 +25,7 @@ RUN set -xe; \
       python3-pymysql \
       x11-apps \
       iproute2 \
+      ulogd2 \
       sudo \
       git \
       make \

@@ -13,4 +13,10 @@ if [ ! -d runelite/.git ]; then
 fi
 popd
 
+if [ -f .env ]; then
+  source .env
+else
+  DOT_RUNELITE_DIR=dot-runelite  # This is a docker managed volume
+fi
+
 docker-compose up -d "$@"

@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 
+import os
+
 # To get around issues where setup.py doesn't work
 import sys
 sys.path.append("/opt/runefoil")
 
 import logging
 import runefoil2
+import runefoil2.utils
 
 logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.DEBUG)
+
+# Make sure permissions are good so that the jagex cache can be written
+# to a docker volume.
+runefoil2.utils.system("chown btw:btw /data/jagexcache")
 runefoil2.main()

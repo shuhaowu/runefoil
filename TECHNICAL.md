@@ -24,3 +24,26 @@ As a note, systemd has ExecStartPre (0-7), ExecStart (8), and ExecStopPost (9).
 This is not available in supervisord, so we need to reinvent a process manager
 in code for docker. Also need to perform user switching.
 
+## HTTP Service
+
+The Runelite HTTP service is compiled during the built and deployed to a
+tomcat8 process managed by supervisord. This is the only way I can reliably run
+the HTTP service. I was unable to figure out how to get it to run standalone.
+
+## Network restrictions
+
+Performed by nftables within the container before and after runelite execution.
+We get all the worlds via Jagex's proprietary API and then translates the
+hostnames into IP addresses we are allowed to contact. We also allow
+connectivity to the MySQL and MongoDB containers.
+
+The MySQL container has similar restrictions, as it also runs foreign code.
+MongoDB is not subject to restrictions, tho.
+
+## Other services
+
+- MySQL runs locally with a custom built image on top of MariaDB, as we need to
+  manually compile a runelite-specific mysql plugin.
+  - The container is also built with some initial table creation code, which is
+    cherry-picked from runelite and may become out of sync.
+- MongoDB just runs normally as its own container.

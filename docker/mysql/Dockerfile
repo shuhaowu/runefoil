@@ -12,6 +12,16 @@ RUN set -xe; \
 
 FROM mariadb:10.2-bionic
 
+RUN set -xe; \
+    export DEBIAN_FRONTEND=noninteractive; \
+    apt-get update; \
+    apt-get install -y nftables; \
+    apt-get clean; \
+    rm /var/lib/apt/list/* -rf;
+
 COPY --from=builder /opt/runelite-mysql/libxp.so /opt/runelite-mysql/libxp.so
-COPY setup-mysql.sh /docker-entrypoint-initdb.d/00-setup-mysql.sh
+COPY entrypoint.sh /entrypoint.sh
+COPY nftables.conf /etc/nftables.conf
 COPY init.sql /docker-entrypoint-initdb.d/10-init.sql
+
+ENTRYPOINT ["/entrypoint.sh"]

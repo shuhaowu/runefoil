@@ -4,6 +4,7 @@ import requests
 import shutil
 import socket
 import subprocess
+import time
 
 from . import constants
 
@@ -28,7 +29,7 @@ flush ruleset
 
 table inet filter {{
   chain input {{
-    type filter hook input priority 0;
+    type filter hook input priority 0; policy drop;
 
     # accept any localhost traffic
     iif lo accept
@@ -36,17 +37,16 @@ table inet filter {{
     # accept traffic originated from us
     ct state established,related accept
 
-    # accept SSH for ansible provision
-    tcp dport ssh accept
-
     counter drop
   }}
 
   chain output {{
-    type filter hook output priority 0;
+    type filter hook output priority 0; policy drop;
 
     oif lo accept
-    ct state established,related accept
+
+    # TODO: this is probably not needed/not safe, as existing connections will thus be allowed.
+    # ct state established,related accept
 
 {ipdaddr_rules}
 
@@ -70,9 +70,6 @@ table inet filter {
     # accept traffic originated from us
     ct state established,related accept
 
-    # accept SSH for ansible provision
-    tcp dport ssh accept
-
     counter drop
   }
 
@@ -91,8 +88,8 @@ def enable_internet():
   with open("/etc/hosts", "w") as f:
     f.write(UNRESTRICTED_HOSTS.format(hostname=socket.gethostname()))
 
-  logging.info("enabling dns access via nsswitch")
-  shutil.copyfile(UNRESTRICTED_NSSWITCH_PATH, "/etc/nsswitch.conf")
+  # logging.info("enabling dns access via nsswitch")
+  # shutil.copyfile(UNRESTRICTED_NSSWITCH_PATH, "/etc/nsswitch.conf")
 
   logging.info("writing new nftable rules")
   with open("/etc/nftables.conf", "w") as f:
@@ -103,7 +100,18 @@ def enable_internet():
 
 
 def disable_internet():
-  allowed_rs_host_to_ips = _allowed_hostnames_to_ips()
+  for i in range(3):
+    try:
+      allowed_rs_host_to_ips = _allowed_hostnames_to_ips()
+    except UnicodeError as e:
+      logging.warning("[RETRYING] {}".format(e))
+      # Sometimes, we get a UnicodeError: encoding with 'idna' codec failed (UnicodeError: Invalid character '\x8a')
+      # Retry seems to work
+      time.sleep(0.5)
+      continue
+    else:
+      break
+
   allowed_hosts = list(allowed_rs_host_to_ips.items())
   allowed_hosts.append(["api.runelite.net", "127.0.0.1"])  # Definitely prevents contact to real runelite
   allowed_hosts = map(lambda item: " ".join((item[1], item[0])), allowed_hosts)
@@ -115,8 +123,8 @@ def disable_internet():
   with open("/etc/hosts", "w") as f:
     f.write(hosts)
 
-  logging.info("disabling dns access via nsswitch")
-  shutil.copyfile(RESTRICTED_NSSWITCH_PATH, "/etc/nsswitch.conf")
+  # logging.info("disabling dns access via nsswitch")
+  # shutil.copyfile(RESTRICTED_NSSWITCH_PATH, "/etc/nsswitch.conf")
 
   logging.info("writing new nftable rules")
   ipdaddr_rules = []
