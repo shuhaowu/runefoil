@@ -6,12 +6,14 @@ def main():
   # We need to update NVIDIA drivers if it out of sync with the host.
   # Otherwise OpenGL acceleration will not be available and performance
   # suffers significantly.
-  system.ensure_gpu_drivers_are_up_to_date()
-  system.ensure_database_is_seeded()
+
 
   runelite.stop_all_services()
   runelite.terminate_stray_applications()
   network.enable_internet()
+
+  system.ensure_gpu_drivers_are_up_to_date()
+
   local_version, remote_version = runelite.check_for_update()
   if remote_version != local_version:
     runelite.update_and_patch_source_code(remote_version)

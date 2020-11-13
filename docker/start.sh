@@ -19,4 +19,9 @@ else
   DOT_RUNELITE_DIR=dot-runelite  # This is a docker managed volume
 fi
 
-docker-compose up -d "$@"
+if [ -n "$@" ]; then
+  docker-compose up -d --build
+else
+  docker-compose up -d "$@"
+fi
+

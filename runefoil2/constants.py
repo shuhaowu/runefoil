@@ -3,6 +3,7 @@ import os.path
 RL_BASEDIR = "/opt/runelite"
 RL_JAR_PATH = os.path.join(RL_BASEDIR, "client.shaded.jar")
 RL_VERSION_PATH = os.path.join(RL_BASEDIR, "current-version")
+NVIDIA_VERSION_PATH = os.path.join(RL_BASEDIR, "nvidia-version")
 RL_SOURCE_PATH = "/opt/runelite/src"
 RL_STATIC_PATH = "/opt/static.runelite.net"
 

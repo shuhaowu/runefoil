@@ -31,6 +31,8 @@ RUN set -xe; \
       make \
       maven \
       curl \
+      # NVIDIA driver requirements
+      kmod \
     ; \
     # Begin installing tomcat8
     cd /tmp; \
