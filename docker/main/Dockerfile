@@ -38,8 +38,8 @@ RUN set -xe; \
     cd /tmp; \
     adduser --system --group $TOMCAT_USER; \
     mkdir -p /opt/tomcat8; \
-    wget -O tomcat.tar.gz --progress=dot:mega https://mirror.dsrg.utoronto.ca/apache/tomcat/tomcat-8/v8.5.59/bin/apache-tomcat-8.5.59.tar.gz; \
-    echo "3106fa39f1859ba31c87d245eaf8efe9c1f2f4837dc4f259c245d2c9b55d3593e97a9925e7d012d397987279965b8e24d940cfdda062d8ac9b64e41396120bd9 tomcat.tar.gz" | sha512sum --strict --check -; \
+    wget -O tomcat.tar.gz --progress=dot:mega https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.60/bin/apache-tomcat-8.5.60.tar.gz; \
+    echo "460b4d0f2d445670b69ff97d4295628b9ce444c294e301b4c0c5e4c48b42bb1a642769f075dfe105b7d7257d9aba62b75a6ea5b6fb65487891ab23d7bb3d6140 tomcat.tar.gz" | sha512sum --strict --check -; \
     tar xf tomcat.tar.gz -C /opt/tomcat8 --strip-components=1; \
     chown -R root:$TOMCAT_USER /opt/tomcat8; \
     chmod 0750 /opt/tomcat8/conf; \

@@ -6,13 +6,33 @@ import os
 import sys
 sys.path.append("/opt/runefoil")
 
+from pathlib import Path
+import shutil
+
 import logging
 import runefoil2
+import runefoil2.constants
 import runefoil2.utils
 
 logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.DEBUG)
 
+# A bit hacky..
+runefoil2.utils.system("mkdir -p {}".format(runefoil2.constants.RL_BASEDIR))
+
+if os.path.exists(runefoil2.constants.LOCK_PATH):
+  print("error: runelite is already running.")
+  print("       will not start another instance due to security reasons.")
+  sys.exit(1)
+
+Path(runefoil2.constants.LOCK_PATH).touch()
+
 # Make sure permissions are good so that the jagex cache can be written
 # to a docker volume.
-runefoil2.utils.system("chown btw:btw /data/jagexcache")
-runefoil2.main()
+runefoil2.utils.system("chown -R btw:btw /data/jagexcache")
+
+try:
+  runefoil2.main()
+finally:
+  runefoil2.runelite.stop_all_services()
+  runefoil2.runelite.terminate_stray_applications()
+  os.remove(runefoil2.constants.LOCK_PATH)

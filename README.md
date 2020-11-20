@@ -1,7 +1,7 @@
 Runefoil
 ========
 
-Run Runelite in a secure environment such that it's not possible for it to
+Run Runelite in a secure environment such that it is unlikely for it to
 exfiltrate data(-). The name Runefoil is inspired by the tinfoil hat, as we are
 paranoid enough to run it in such a convoluted environment.
 
@@ -19,11 +19,13 @@ This project is super experimental right now, expect issues.
 How does it work?
 -----------------
 
-Runefoil runs Runelite inside an unprivileged LXD container with nftables
-firewall rules allowing only connections to official Jagex Servers. 
+Runefoil used to run Runelite in an unprivileged LXD container with nftable
+rules allowing only connections to official Jagex servers. It is now running
+inside a docker-based setup (via docker-compose) as maintaining the LXD setup
+became increasingly difficult due to the lack of maintenance on lxdock.
 
-The API server of Runelite is also run inside this container to ensure no data
-leaves tho container. All the setup of this is done via ansible.
+The API server of Runelite is also run inside the container to ensure no data
+leaves tho container. All the setup of this is done via the Dockerifle.
 
 Runefoil also compiles Runelite locally inside the container instead of
 downloading the binary. It checks for updates to Runelite everytime you launch
@@ -38,45 +40,41 @@ Prerequisites:
 - This project only supports Linux hosts. It will not work on other platforms
   and they will not be supported in the future either.
 - You run X11.
-- You need to [install LXD](https://linuxcontainers.org/lxd/getting-started-cli/).
-- You need to [install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+- You need to install docker and docker-compose.
 
 Instructions to run:
 
 ```
-$ # Need my fork of lxdock as it has x11 support. PR for this to the upstream
-$ # repository is pending: https://github.com/lxdock/lxdock/pull/143
-$ git clone https://github.com/shuhaowu/lxdock.git
-$ cd lxdock
-$ python3 setup.py install --user
-$ # You should add the line below to your .bashrc if not already
-$ export PATH="`python3 -m site --user-base`/bin:$PATH"
-
 $ cd ~/apps # whereever you want to put it
 $ git clone https://github.com/shuhaowu/runefoil.git
 $ cd runefoil
 
-$ # you can change the below into any directory you want.
-$ # this directory will contain your runelite settings. For example you can
-$ # dropbox sync it.
-$ echo "RUNELITE_SETTINGS_PATH=./dot-runelite" > .env
-$ mkdir dot-runelite
-
-$ # In the future, I'll replace these scripts with a small GUI program
-$ ./scripts/setup-container.sh
-$ ./scripts/start-runelite.sh
-
-$ # In another terminal, as the first time setup can take quite a while to
-$ # download all the maven stuff and compile runelite. This allows you
-$ # to see that there are some progress.
-$ ./scripts/tail-runelite-logs.sh
+$ ./docker/start.sh
+$ ./docker/runelite.sh
 ```
 
-### Issues with rendering ###
+### Advanced usage ###
 
-If you experience issues with rendering ()b)bbintel GPU beaware), disable opengl via
-`scripts/disable-opengl.sh`. To re-enable opengl, use
-`scripts/enable-opengl.sh`.
+- If you experience issues with rendering, try either disabling or enabling
+  OpenGL viathe script `docker/toggle-opengl.sh`. More information:
+  https://github.com/runelite/runelite/wiki/Disable-Hardware-Acceleration
+- If you're having trouble with scaling for HiDPI displays, use the script
+  `docker/set-gdk-scale.sh` with the argument `1` or `2`. Example:
+  `docker/set-gdk-scale.sh 2`. This sets `GDK_SCALE`. See:
+  https://github.com/runelite/runelite/issues/2719.
+- Runelite settings can be exported away from the container and put into
+  a host-visible directory that can be synchronized somewhere. To do this:
+  `echo "export DOT_RUNELITE_DIR=/path/to/runelite/settings/dir" > .env` here
+  before recreating the docker containers via `docker/start.sh`
+
+### Troubleshooting ###
+
+- If Runelite doesn't start and the error says there are multiple instances
+  running and you're sure there's no instances running:
+  - `docker-compose stop` to stop all containers
+  - `docker/start.sh` to restart all containers.
+  - `docker-compose exec main rm -f /opt/runelite/lock` to remove the lock file
+  - `docker/runelite.sh` to restart runelite.
 
 Upgrading Runefoil
 ------------------
@@ -84,7 +82,7 @@ Upgrading Runefoil
 If runefoil changed and needs an upgrade, you might be best served to run:
 
 ```
-$ lxdock provision
+$ docker/start.sh
 ```
 
 **WARNING: THIS WILL TERMINATE YOUR RUNESCAPE SESSION.**
@@ -161,8 +159,6 @@ In addition to the security issues above, some usability issues remains:
 - You can only run 1 RL instance at a time. 
   - This is a security measure to ensure no race conditions can occur as we
     lower the network restrictions during the launch process.
-  - In the future, lxdock will be modified to include support to launch
-    multiple containers from a single base.
   - As a work around right now, you can clone the runefoil repo multiple times
     and launch multiple containers.
 - API server does not necessarily have all the features.
