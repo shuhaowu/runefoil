@@ -5,7 +5,6 @@ from . import constants, utils
 
 
 CURRENT_NVIDIA_VERSION_PATH = "/proc/driver/nvidia/version"
-CURRENT_NVIDIA_VERSION_PATH = "/v"
 
 
 def ensure_gpu_drivers_are_up_to_date():

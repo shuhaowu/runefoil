@@ -8,7 +8,7 @@ ENV TOMCAT_USER tomcat
 
 RUN set -xe; \
     addgroup --gid $gid $BTW_USER; \
-    adduser --gecos "" --disabled-password --uid $uid --gid $uid $BTW_USER; \
+    adduser --gecos "" --disabled-password --uid $uid --gid $gid $BTW_USER; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
     apt-get install -y wget gnupg software-properties-common; \
