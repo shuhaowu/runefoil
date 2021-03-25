@@ -1,4 +1,4 @@
-From 8ee9b09f162420799eead1e0aa10a954643a84f5 Mon Sep 17 00:00:00 2001
+From 95d7c0147608470fb35fc8da6c2322be9682874e Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Mon, 5 Aug 2019 22:24:42 -0400
 Subject: [PATCH 3/4] Increased limit on loot tracker SELECT
@@ -30,10 +30,10 @@ index ef39ac0d5..8d09094e8 100644
 \ No newline at end of file
 +}
 diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-index ed085b081..db8acb8fd 100644
+index 46857ea2e..9ff04ef96 100644
 --- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
 +++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-@@ -459,6 +459,9 @@ public class LootTrackerPlugin extends Plugin
+@@ -471,6 +471,9 @@ public class LootTrackerPlugin extends Plugin
  			{
  				queuedLoots.add(lootRecord);
  			}

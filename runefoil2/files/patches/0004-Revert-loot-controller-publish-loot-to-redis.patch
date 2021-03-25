@@ -1,4 +1,4 @@
-From 8db98686aa3725bea34581d4ca8a6f46fb076271 Mon Sep 17 00:00:00 2001
+From 71f508dc344a63d32a46046fbfd6dcc3cf2031f1 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Sun, 11 Oct 2020 23:36:13 -0400
 Subject: [PATCH 4/4] Revert "loot controller: publish loot to redis"
@@ -63,10 +63,10 @@ index 8d09094e8..b8acaac44 100644
  
  	@GetMapping
 diff --git a/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java b/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
-index 685479a63..cf478e548 100644
+index 68e64270d..245d76363 100644
 --- a/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
 +++ b/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
-@@ -36,7 +36,6 @@ import net.runelite.http.api.loottracker.LootRecord;
+@@ -37,7 +37,6 @@ import net.runelite.http.api.loottracker.LootRecord;
  import net.runelite.http.api.loottracker.LootRecordType;
  import net.runelite.http.service.account.AuthFilter;
  import net.runelite.http.service.account.beans.SessionEntry;
@@ -74,7 +74,7 @@ index 685479a63..cf478e548 100644
  import org.junit.Before;
  import org.junit.Test;
  import org.junit.runner.RunWith;
-@@ -55,7 +54,6 @@ import org.springframework.test.context.junit4.SpringRunner;
+@@ -56,7 +55,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  import org.springframework.test.web.servlet.MockMvc;
  import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
  import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,7 +82,7 @@ index 685479a63..cf478e548 100644
  
  @RunWith(SpringRunner.class)
  @WebMvcTest(LootTrackerController.class)
-@@ -71,16 +69,11 @@ public class LootTrackerControllerTest
+@@ -72,16 +70,11 @@ public class LootTrackerControllerTest
  	@MockBean
  	private AuthFilter authFilter;
  
@@ -99,7 +99,7 @@ index 685479a63..cf478e548 100644
  	}
  
  	@Test
-@@ -100,4 +93,4 @@ public class LootTrackerControllerTest
+@@ -101,4 +94,4 @@ public class LootTrackerControllerTest
  
  		verify(lootTrackerService).store(eq(Collections.singletonList(lootRecord)), anyInt());
  	}

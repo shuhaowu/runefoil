@@ -1,4 +1,4 @@
-From f764b356e73400dc7714c65f70ce470ebce8c727 Mon Sep 17 00:00:00 2001
+From 700b6be80d4c787bfff44874d650fb762c958a76 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Fri, 17 Jul 2020 21:06:26 -0400
 Subject: [PATCH 2/4] Short circuit account code
@@ -85,10 +85,10 @@ index 4f39ed00e..d78deb9a9 100644
  		OAuthResponse lr = new OAuthResponse();
  		lr.setOauthUrl(authorizationUrl);
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-index cadf0b456..aa7085e26 100644
+index 4b6bf1674..3e219e68c 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-@@ -147,27 +147,18 @@ public class SessionManager
+@@ -150,27 +150,18 @@ public class SessionManager
  	 */
  	private void openSession(AccountSession session, boolean openSocket)
  	{
@@ -120,7 +120,7 @@ index cadf0b456..aa7085e26 100644
  
  		if (accountSession == null)
  		{
-@@ -189,7 +180,8 @@ public class SessionManager
+@@ -192,7 +183,8 @@ public class SessionManager
  		accountSession = null; // No more account
  
  		// Restore config
@@ -130,7 +130,7 @@ index cadf0b456..aa7085e26 100644
  
  		eventBus.post(new SessionClose());
  	}
-@@ -197,7 +189,10 @@ public class SessionManager
+@@ -200,7 +192,10 @@ public class SessionManager
  	public void login()
  	{
  		// If a session is already open, use that id. Otherwise generate a new id.
@@ -142,7 +142,7 @@ index cadf0b456..aa7085e26 100644
  		accountClient.setUuid(uuid);
  
  		final OAuthResponse login;
-@@ -212,11 +207,12 @@ public class SessionManager
+@@ -215,11 +210,12 @@ public class SessionManager
  			return;
  		}
  
@@ -161,10 +161,10 @@ index cadf0b456..aa7085e26 100644
  
  	@Subscribe
 diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-index af158dfbb..169f5f4a7 100644
+index 0a821d9a7..df5038c13 100644
 --- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-@@ -114,6 +114,10 @@ public class ConfigManager
+@@ -160,6 +160,10 @@ public class ConfigManager
  
  	public final void switchSession(AccountSession session)
  	{
