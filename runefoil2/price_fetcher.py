@@ -128,11 +128,12 @@ def _update_prices_table_and_commit(all_prices):
   fetched_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
   for item_price in all_prices:
-    time = datetime.datetime.fromtimestamp(item_price["time"]["seconds"]).strftime("%Y-%m-%d %H:%M:%S")
+    # TODO: https://oldschool.runescape.wiki/w/RuneScape:Real-time_Prices
+    # As of 1.7.3, the runelite api gives {"id":2,"name":"Cannonball","price":171,"wikiPrice":164}
     args.append([
       item_price["id"],
-      item_price["price"],
-      time,
+      item_price["wikiPrice"],
+      fetched_time, # TODO: don't think this is right but it'll get around 1.7.3.
       fetched_time,
     ])
 
