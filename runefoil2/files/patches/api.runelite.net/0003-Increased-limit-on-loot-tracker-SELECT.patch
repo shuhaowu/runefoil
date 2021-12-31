@@ -1,16 +1,15 @@
-From 95d7c0147608470fb35fc8da6c2322be9682874e Mon Sep 17 00:00:00 2001
-From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Mon, 5 Aug 2019 22:24:42 -0400
+From 9aea73e28dd5e08d12ee162d2ec1d0fb1a3fee3c Mon Sep 17 00:00:00 2001
+From: Stephanie <eng.steph@gmail.com>
+Date: Fri, 31 Dec 2021 01:40:24 -0500
 Subject: [PATCH 3/4] Increased limit on loot tracker SELECT
 
 Also immediately submit loot on drop instead of waiting for 5 min.
 ---
  .../http/service/loottracker/LootTrackerController.java       | 4 ++--
- .../client/plugins/loottracker/LootTrackerPlugin.java         | 3 +++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-index ef39ac0d5..8d09094e8 100644
+index ef39ac0..8d09094 100644
 --- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 +++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 @@ -90,7 +90,7 @@ public class LootTrackerController
@@ -29,20 +28,6 @@ index ef39ac0d5..8d09094e8 100644
 -}
 \ No newline at end of file
 +}
-diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-index 46857ea2e..9ff04ef96 100644
---- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-+++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-@@ -471,6 +471,9 @@ public class LootTrackerPlugin extends Plugin
- 			{
- 				queuedLoots.add(lootRecord);
- 			}
-+
-+			// PATCHED: We can just immediately submit it because don't need the rate limiting locally
-+			submitLoot();
- 		}
- 
- 		eventBus.post(new LootReceived(name, combatLevel, type, items));
 -- 
 2.25.1
 

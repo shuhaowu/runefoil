@@ -1,6 +1,6 @@
-From 71f508dc344a63d32a46046fbfd6dcc3cf2031f1 Mon Sep 17 00:00:00 2001
-From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Sun, 11 Oct 2020 23:36:13 -0400
+From bbc17a5393989685e47bccd32bff289d994d2645 Mon Sep 17 00:00:00 2001
+From: Stephanie <eng.steph@gmail.com>
+Date: Fri, 31 Dec 2021 01:40:52 -0500
 Subject: [PATCH 4/4] Revert "loot controller: publish loot to redis"
 
 Modified to incorporate changes from 1799c9e593061d2a54932b6b7332f37b081d54fa.
@@ -10,7 +10,7 @@ Modified to incorporate changes from 1799c9e593061d2a54932b6b7332f37b081d54fa.
  2 files changed, 1 insertion(+), 21 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-index 8d09094e8..b8acaac44 100644
+index 8d09094..b8acaac 100644
 --- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 +++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 @@ -26,7 +26,6 @@
@@ -63,7 +63,7 @@ index 8d09094e8..b8acaac44 100644
  
  	@GetMapping
 diff --git a/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java b/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
-index 68e64270d..245d76363 100644
+index 68e6427..245d763 100644
 --- a/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
 +++ b/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
 @@ -37,7 +37,6 @@ import net.runelite.http.api.loottracker.LootRecord;

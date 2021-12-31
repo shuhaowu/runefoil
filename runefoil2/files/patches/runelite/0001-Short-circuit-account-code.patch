@@ -1,7 +1,7 @@
 From 700b6be80d4c787bfff44874d650fb762c958a76 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Fri, 17 Jul 2020 21:06:26 -0400
-Subject: [PATCH 2/4] Short circuit account code
+Subject: [PATCH 1/2] Short circuit account code
 
 Since we're running a single player instance of RuneLite API server
 locally, the account feature should be usable without Google.
@@ -9,81 +9,10 @@ locally, the account feature should be usable without Google.
 To do this, simply short circuited all the login code and automatically
 login the player with a default account.
 ---
- .../http/service/account/AccountService.java  | 56 ++++++++++++++-----
  .../client/account/SessionManager.java        | 36 ++++++------
  .../runelite/client/config/ConfigManager.java |  4 ++
  3 files changed, 63 insertions(+), 33 deletions(-)
 
-diff --git a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
-index 4f39ed00e..d78deb9a9 100644
---- a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
-+++ b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
-@@ -141,22 +141,52 @@ public class AccountService
- 	@GetMapping("/login")
- 	public OAuthResponse login(@RequestParam UUID uuid)
- 	{
--		State state = new State();
--		state.setUuid(uuid);
--		state.setApiVersion(RuneLiteAPI.getVersion());
-+		// State state = new State();
-+		// state.setUuid(uuid);
-+		// state.setApiVersion(RuneLiteAPI.getVersion());
-+
-+		// OAuth20Service service = new ServiceBuilder()
-+		// 	.apiKey(oauthClientId)
-+		// 	.apiSecret(oauthClientSecret)
-+		// 	.scope(SCOPE)
-+		// 	.callback(oauthCallback)
-+		// 	.state(gson.toJson(state))
-+		// 	.build(GoogleApi20.instance());
-+
-+		// final Map<String, String> additionalParams = new HashMap<>();
-+		// additionalParams.put("prompt", "select_account");
-+
-+		// String authorizationUrl = service.getAuthorizationUrl(additionalParams);
-+
-+		// PATCHED: we just immediately log the user in by copy pasting some code from the callback() method.
-+		//          At some point in the future, we should probably just allow login with any UUID instead.
-+		//          of tying it down, which means we might have to relogin periodically.
-+		try (Connection con = sql2o.open())
-+		{
-+			con.createQuery("insert ignore into users (username) values (:username)")
-+					.addParameter("username", "fe@ironman.btw")
-+					.executeUpdate();
- 
--		OAuth20Service service = new ServiceBuilder()
--			.apiKey(oauthClientId)
--			.apiSecret(oauthClientSecret)
--			.scope(SCOPE)
--			.callback(oauthCallback)
--			.state(gson.toJson(state))
--			.build(GoogleApi20.instance());
-+			UserEntry user = con.createQuery("select id from users where username = :username")
-+					.addParameter("username", "fe@ironman.btw")
-+					.executeAndFetchFirst(UserEntry.class);
- 
--		final Map<String, String> additionalParams = new HashMap<>();
--		additionalParams.put("prompt", "select_account");
-+			if (user == null)
-+			{
-+				logger.warn("Unable to find newly created user session");
-+				return null; // that's weird
-+			}
-+
-+			// insert session
-+			con.createQuery("insert ignore into sessions (user, uuid) values (:user, :uuid)")
-+					.addParameter("user", user.getId())
-+					.addParameter("uuid", uuid.toString())
-+					.executeUpdate();
-+		}
- 
--		String authorizationUrl = service.getAuthorizationUrl(additionalParams);
-+		// PATCHED: We still need to return an OauthResponse to keep the patch size low.
-+		//          The client needs to just assume they're logged in via fe@ironman.btw
-+		String authorizationUrl = "http://fe.ironmeme.invalid";
- 
- 		OAuthResponse lr = new OAuthResponse();
- 		lr.setOauthUrl(authorizationUrl);
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 index 4b6bf1674..3e219e68c 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
