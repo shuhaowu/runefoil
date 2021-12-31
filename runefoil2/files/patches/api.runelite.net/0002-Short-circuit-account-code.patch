@@ -1,0 +1,86 @@
+From 7d26d9bb435d74a892c355c2393ae9c0226d55a5 Mon Sep 17 00:00:00 2001
+From: Stephanie <eng.steph@gmail.com>
+Date: Fri, 31 Dec 2021 01:39:59 -0500
+Subject: [PATCH 2/4] Short circuit account code
+
+Since we're running a single player instance of RuneLite API server
+locally, the account feature should be usable without Google.
+
+To do this, simply short circuited all the login code and automatically
+login the player with a default account.
+---
+ .../http/service/account/AccountService.java  | 57 ++++++++++++++-----
+ 1 file changed, 42 insertions(+), 15 deletions(-)
+
+diff --git a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
+index 10a289b..dc20172 100644
+--- a/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
++++ b/http-service/src/main/java/net/runelite/http/service/account/AccountService.java
+@@ -144,22 +144,49 @@ public class AccountService
+ 	@GetMapping("/login")
+ 	public OAuthResponse login(@RequestParam UUID uuid)
+ 	{
+-		State state = new State();
+-		state.setUuid(uuid);
+-		state.setApiVersion(runeliteVersion);
+-
+-		OAuth20Service service = new ServiceBuilder()
+-			.apiKey(oauthClientId)
+-			.apiSecret(oauthClientSecret)
+-			.scope(SCOPE)
+-			.callback(oauthCallback)
+-			.state(gson.toJson(state))
+-			.build(GoogleApi20.instance());
+-
+-		final Map<String, String> additionalParams = new HashMap<>();
+-		additionalParams.put("prompt", "select_account");
++		// State state = new State();
++		// state.setUuid(uuid);
++		// state.setApiVersion(RuneLiteAPI.getVersion());
++
++		// OAuth20Service service = new ServiceBuilder()
++		// 	.apiKey(oauthClientId)
++		// 	.apiSecret(oauthClientSecret)
++		// 	.scope(SCOPE)
++		// 	.callback(oauthCallback)
++		// 	.state(gson.toJson(state))
++		// 	.build(GoogleApi20.instance());
++
++		// final Map<String, String> additionalParams = new HashMap<>();
++		// additionalParams.put("prompt", "select_account");
++
++		// String authorizationUrl = service.getAuthorizationUrl(additionalParams);
++
++		// PATCHED: we just immediately log the user in by copy pasting some code from the callback() method.
++		//          At some point in the future, we should probably just allow login with any UUID instead.
++		//          of tying it down, which means we might have to relogin periodically.
++		try (Connection con = sql2o.open())
++		{
++			con.createQuery("insert ignore into users (username) values (:username)")
++					.addParameter("username", "fe@ironman.btw")
++					.executeUpdate();
++			UserEntry user = con.createQuery("select id from users where username = :username")
++					.addParameter("username", "fe@ironman.btw")
++					.executeAndFetchFirst(UserEntry.class);
++			if (user == null)
++			{
++				logger.warn("Unable to find newly created user session");
++				return null; // that's weird
++			}
+ 
+-		String authorizationUrl = service.getAuthorizationUrl(additionalParams);
++			// insert session
++			con.createQuery("insert ignore into sessions (user, uuid) values (:user, :uuid)")
++					.addParameter("user", user.getId())
++					.addParameter("uuid", uuid.toString())
++					.executeUpdate();
++		}
++		// PATCHED: We still need to return an OauthResponse to keep the patch size low.
++		//          The client needs to just assume they're logged in via fe@ironman.btw
++		String authorizationUrl = "http://fe.ironmeme.invalid";
+ 
+ 		OAuthResponse lr = new OAuthResponse();
+ 		lr.setOauthUrl(authorizationUrl);
+-- 
+2.25.1
+

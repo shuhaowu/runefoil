@@ -1,6 +1,6 @@
-From 2a10ade5c1c525fcc428e97b5e12e11ee874526a Mon Sep 17 00:00:00 2001
-From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Thu, 23 Apr 2020 23:04:20 -0400
+From 06586802fef066843bf4c1ef002c565641669690 Mon Sep 17 00:00:00 2001
+From: Stephanie <eng.steph@gmail.com>
+Date: Fri, 31 Dec 2021 01:39:33 -0500
 Subject: [PATCH 1/4] Runefoil base patch set
 
 Things done:
@@ -12,10 +12,10 @@ Things done:
  1 file changed, 35 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
-index d25621260..43ab70478 100644
+index bc3f03e..aa06970 100644
 --- a/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
 +++ b/http-service/src/main/java/net/runelite/http/service/item/ItemService.java
-@@ -240,39 +240,4 @@ public class ItemService
+@@ -249,39 +249,4 @@ public class ItemService
  			throw new IOException(ex);
  		}
  	}

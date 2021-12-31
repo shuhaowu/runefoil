@@ -13,6 +13,7 @@ from .utils import system, chdir
 
 RL_GIT_URL = "https://github.com/runelite/runelite.git"
 RL_STATIC_GIT_URL = "https://github.com/runelite/static.runelite.net.git"
+RL_API_GIT_URL = "https://github.com/runelite/api.runelite.net.git"
 BOOTSTRAP_URL = "https://raw.githubusercontent.com/runelite/static.runelite.net/gh-pages/bootstrap.json"
 
 
@@ -61,10 +62,29 @@ def update_and_patch_source_code(version):
   with chdir(constants.RL_SOURCE_PATH):
     system("git reset --hard HEAD")
     system("git checkout runelite-parent-{}".format(version))
-    patches = os.listdir(constants.PATCHES_PATH)
+    patchdir = os.path.join(constants.PATCHES_PATH, "runelite")
+    patches = os.listdir(patchdir)
     patches.sort()
     for patch in patches:
-      patch = os.path.join(constants.PATCHES_PATH, patch)
+      patch = os.path.join(patchdir, patch)
+      system("git apply {}".format(patch))
+
+  # api.runelite.net source code
+  # ====================
+  if os.path.exists(constants.RL_API_PATH):
+    with chdir(constants.RL_API_PATH):
+      system("git fetch origin")
+  else:
+    system("git clone {} {}".format(RL_API_GIT_URL, constants.RL_API_PATH))
+
+  with chdir(constants.RL_API_PATH):
+    system("git reset --hard HEAD")
+    system("git checkout origin/master".format(version))
+    patchdir = os.path.join(constants.PATCHES_PATH, "api.runelite.net")
+    patches = os.listdir(patchdir)
+    patches.sort()
+    for patch in patches:
+      patch = os.path.join(patchdir, patch)
       system("git apply {}".format(patch))
 
   # static.runelite.net source code
@@ -83,11 +103,12 @@ def update_and_patch_source_code(version):
 def compile():
   with chdir(constants.RL_SOURCE_PATH):
     system("mvn clean package -DskipTests")
-
+  with chdir(constants.RL_API_PATH):
+    system("mvn clean package -DskipTests")
 
 def move_compiled_artifact_to_final_positions(version):
   jar_path = os.path.join(constants.RL_SOURCE_PATH, "runelite-client", "target", "client-{}-shaded.jar".format(version))
-  war_path = os.path.join(constants.RL_SOURCE_PATH, "http-service", "target", "runelite-{}.war".format(version))
+  war_path = os.path.join(constants.RL_API_PATH, "http-service", "target", "runelite-1.0.0-SNAPSHOT.war")
 
   logging.info("moving jar to {}".format(constants.RL_JAR_PATH))
   shutil.copyfile(jar_path, constants.RL_JAR_PATH)

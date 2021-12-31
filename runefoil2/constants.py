@@ -8,6 +8,7 @@ LOCK_PATH = os.path.join(RL_BASEDIR, "lock")
 
 RL_SOURCE_PATH = "/opt/runelite/src"
 RL_STATIC_PATH = "/opt/static.runelite.net"
+RL_API_PATH = "/opt/api.runelite.net"
 
 RUNEFOIL_BASEDIR = "/opt/runefoil"
 RUNEFOIL_RL_SOURCE_PATH = os.path.join(RUNEFOIL_BASEDIR, "shared", "runelite") # Not used for now
