@@ -1,22 +1,21 @@
-From 95d7c0147608470fb35fc8da6c2322be9682874e Mon Sep 17 00:00:00 2001
-From: Shuhao Wu <shuhao@shuhaowu.com>
-Date: Mon, 5 Aug 2019 22:24:42 -0400
+From c23da8787e8064f678a9cd794d8e756dea1f45fc Mon Sep 17 00:00:00 2001
+From: Stephanie <eng.steph@gmail.com>
+Date: Sun, 13 Mar 2022 22:23:40 -0400
 Subject: [PATCH 2/2] Increased limit on loot tracker SELECT
 
 Also immediately submit loot on drop instead of waiting for 5 min.
 ---
- .../client/plugins/loottracker/LootTrackerPlugin.java         | 3 +++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ .../runelite/client/plugins/loottracker/LootTrackerPlugin.java  | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-index 46857ea2e..9ff04ef96 100644
+index 39d2b6bf8..05f1a21b6 100644
 --- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
 +++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-@@ -471,6 +471,9 @@ public class LootTrackerPlugin extends Plugin
- 			{
- 				queuedLoots.add(lootRecord);
- 			}
-+
+@@ -564,6 +564,8 @@ public class LootTrackerPlugin extends Plugin
+ 		synchronized (queuedLoots)
+ 		{
+ 			queuedLoots.add(lootRecord);
 +			// PATCHED: We can just immediately submit it because don't need the rate limiting locally
 +			submitLoot();
  		}

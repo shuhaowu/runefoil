@@ -1,4 +1,4 @@
-From 700b6be80d4c787bfff44874d650fb762c958a76 Mon Sep 17 00:00:00 2001
+From 9f8bacb664ed8ab41245efd38c3699ac44f4b401 Mon Sep 17 00:00:00 2001
 From: Shuhao Wu <shuhao@shuhaowu.com>
 Date: Fri, 17 Jul 2020 21:06:26 -0400
 Subject: [PATCH 1/2] Short circuit account code
@@ -9,15 +9,15 @@ locally, the account feature should be usable without Google.
 To do this, simply short circuited all the login code and automatically
 login the player with a default account.
 ---
- .../client/account/SessionManager.java        | 36 ++++++------
- .../runelite/client/config/ConfigManager.java |  4 ++
- 3 files changed, 63 insertions(+), 33 deletions(-)
+ .../client/account/SessionManager.java        | 36 +++++++++----------
+ .../runelite/client/config/ConfigManager.java |  4 +++
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-index 4b6bf1674..3e219e68c 100644
+index c9f432db0..2db150e10 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-@@ -150,27 +150,18 @@ public class SessionManager
+@@ -148,27 +148,18 @@ public class SessionManager
  	 */
  	private void openSession(AccountSession session, boolean openSocket)
  	{
@@ -49,7 +49,7 @@ index 4b6bf1674..3e219e68c 100644
  
  		if (accountSession == null)
  		{
-@@ -192,7 +183,8 @@ public class SessionManager
+@@ -190,7 +181,8 @@ public class SessionManager
  		accountSession = null; // No more account
  
  		// Restore config
@@ -59,7 +59,7 @@ index 4b6bf1674..3e219e68c 100644
  
  		eventBus.post(new SessionClose());
  	}
-@@ -200,7 +192,10 @@ public class SessionManager
+@@ -198,7 +190,10 @@ public class SessionManager
  	public void login()
  	{
  		// If a session is already open, use that id. Otherwise generate a new id.
@@ -71,7 +71,7 @@ index 4b6bf1674..3e219e68c 100644
  		accountClient.setUuid(uuid);
  
  		final OAuthResponse login;
-@@ -215,11 +210,12 @@ public class SessionManager
+@@ -213,11 +208,12 @@ public class SessionManager
  			return;
  		}
  
@@ -90,10 +90,10 @@ index 4b6bf1674..3e219e68c 100644
  
  	@Subscribe
 diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-index 0a821d9a7..df5038c13 100644
+index 8f349d630..9aa3b4a15 100644
 --- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-@@ -160,6 +160,10 @@ public class ConfigManager
+@@ -161,6 +161,10 @@ public class ConfigManager
  
  	public final void switchSession(AccountSession session)
  	{
