@@ -1,26 +1,27 @@
-From c23da8787e8064f678a9cd794d8e756dea1f45fc Mon Sep 17 00:00:00 2001
+From 9b3e84f3e6e7d51a28e53dd39b4897fd6767a5cd Mon Sep 17 00:00:00 2001
 From: Stephanie <eng.steph@gmail.com>
-Date: Sun, 13 Mar 2022 22:23:40 -0400
+Date: Tue, 26 Apr 2022 21:06:53 -0400
 Subject: [PATCH 2/2] Increased limit on loot tracker SELECT
 
 Also immediately submit loot on drop instead of waiting for 5 min.
 ---
- .../runelite/client/plugins/loottracker/LootTrackerPlugin.java  | 2 ++
- 1 file changed, 2 insertions(+)
+ .../runelite/client/plugins/loottracker/LootTrackerPlugin.java | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-index 39d2b6bf8..05f1a21b6 100644
+index 0ad15a249..7a5ccbfe4 100644
 --- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
 +++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-@@ -564,6 +564,8 @@ public class LootTrackerPlugin extends Plugin
+@@ -602,7 +602,8 @@ public class LootTrackerPlugin extends Plugin
+ 		LootRecord lootRecord = new LootRecord(name, type, metadata, toGameItems(items), Instant.now(), getLootWorldId());
  		synchronized (queuedLoots)
  		{
- 			queuedLoots.add(lootRecord);
+-			queuedLoots.add(lootRecord);
 +			// PATCHED: We can just immediately submit it because don't need the rate limiting locally
 +			submitLoot();
  		}
  
- 		eventBus.post(new LootReceived(name, combatLevel, type, items));
+ 		eventBus.post(new LootReceived(name, combatLevel, type, items, amount));
 -- 
 2.25.1
 
