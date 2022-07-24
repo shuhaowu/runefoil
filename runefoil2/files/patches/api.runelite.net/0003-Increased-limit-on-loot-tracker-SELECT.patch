@@ -1,6 +1,6 @@
-From 9aea73e28dd5e08d12ee162d2ec1d0fb1a3fee3c Mon Sep 17 00:00:00 2001
+From eb01eb989ce7171437d1f808fbdefaba07d521d9 Mon Sep 17 00:00:00 2001
 From: Stephanie <eng.steph@gmail.com>
-Date: Fri, 31 Dec 2021 01:40:24 -0500
+Date: Sun, 24 Jul 2022 00:27:07 -0400
 Subject: [PATCH 3/4] Increased limit on loot tracker SELECT
 
 Also immediately submit loot on drop instead of waiting for 5 min.
@@ -9,10 +9,10 @@ Also immediately submit loot on drop instead of waiting for 5 min.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-index ef39ac0..8d09094 100644
+index 620f053..f524c89 100644
 --- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 +++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-@@ -90,7 +90,7 @@ public class LootTrackerController
+@@ -98,7 +98,7 @@ public class LootTrackerController
  	}
  
  	@GetMapping
@@ -21,7 +21,7 @@ index ef39ac0..8d09094 100644
  	{
  		SessionEntry e = auth.handle(request, response);
  		if (e == null)
-@@ -115,4 +115,4 @@ public class LootTrackerController
+@@ -123,4 +123,4 @@ public class LootTrackerController
  
  		service.delete(e.getUser(), eventId);
  	}
