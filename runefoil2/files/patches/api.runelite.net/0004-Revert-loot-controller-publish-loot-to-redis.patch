@@ -1,6 +1,6 @@
-From bbc17a5393989685e47bccd32bff289d994d2645 Mon Sep 17 00:00:00 2001
+From 7a20795f25ca42d8f97c2b2c22c9a496c2b81629 Mon Sep 17 00:00:00 2001
 From: Stephanie <eng.steph@gmail.com>
-Date: Fri, 31 Dec 2021 01:40:52 -0500
+Date: Sun, 24 Jul 2022 00:29:10 -0400
 Subject: [PATCH 4/4] Revert "loot controller: publish loot to redis"
 
 Modified to incorporate changes from 1799c9e593061d2a54932b6b7332f37b081d54fa.
@@ -10,7 +10,7 @@ Modified to incorporate changes from 1799c9e593061d2a54932b6b7332f37b081d54fa.
  2 files changed, 1 insertion(+), 21 deletions(-)
 
 diff --git a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
-index 8d09094..b8acaac 100644
+index f524c89..ca132a3 100644
 --- a/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 +++ b/http-service/src/main/java/net/runelite/http/service/loottracker/LootTrackerController.java
 @@ -26,7 +26,6 @@
@@ -27,9 +27,9 @@ index 8d09094..b8acaac 100644
  import net.runelite.http.service.account.beans.SessionEntry;
 -import net.runelite.http.service.util.redis.RedisPool;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.beans.factory.annotation.Value;
  import org.springframework.web.bind.annotation.DeleteMapping;
- import org.springframework.web.bind.annotation.GetMapping;
-@@ -45,20 +43,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
+@@ -46,20 +44,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
  import org.springframework.web.bind.annotation.RequestMethod;
  import org.springframework.web.bind.annotation.RequestParam;
  import org.springframework.web.bind.annotation.RestController;
@@ -50,9 +50,9 @@ index 8d09094..b8acaac 100644
  	@Autowired
  	private AuthFilter auth;
  
-@@ -82,11 +74,6 @@ public class LootTrackerController
- 			service.store(records, userId);
+@@ -90,11 +82,6 @@ public class LootTrackerController
  		}
+ 
  		response.setStatus(HttpStatusCodes.STATUS_CODE_OK);
 -
 -		try (Jedis jedis = redisPool.getResource())
@@ -63,7 +63,7 @@ index 8d09094..b8acaac 100644
  
  	@GetMapping
 diff --git a/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java b/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
-index 68e6427..245d763 100644
+index d45c206..9c57a55 100644
 --- a/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
 +++ b/http-service/src/test/java/net/runelite/http/service/loottracker/LootTrackerControllerTest.java
 @@ -37,7 +37,6 @@ import net.runelite.http.api.loottracker.LootRecord;
@@ -72,9 +72,9 @@ index 68e6427..245d763 100644
  import net.runelite.http.service.account.beans.SessionEntry;
 -import net.runelite.http.service.util.redis.RedisPool;
  import org.junit.Before;
+ import org.junit.Ignore;
  import org.junit.Test;
- import org.junit.runner.RunWith;
-@@ -56,7 +55,6 @@ import org.springframework.test.context.junit4.SpringRunner;
+@@ -57,7 +56,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  import org.springframework.test.web.servlet.MockMvc;
  import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
  import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,7 +82,7 @@ index 68e6427..245d763 100644
  
  @RunWith(SpringRunner.class)
  @WebMvcTest(LootTrackerController.class)
-@@ -72,16 +70,11 @@ public class LootTrackerControllerTest
+@@ -73,16 +71,11 @@ public class LootTrackerControllerTest
  	@MockBean
  	private AuthFilter authFilter;
  
@@ -99,7 +99,7 @@ index 68e6427..245d763 100644
  	}
  
  	@Test
-@@ -101,4 +94,4 @@ public class LootTrackerControllerTest
+@@ -103,4 +96,4 @@ public class LootTrackerControllerTest
  
  		verify(lootTrackerService).store(eq(Collections.singletonList(lootRecord)), anyInt());
  	}
