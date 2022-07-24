@@ -102,13 +102,13 @@ def update_and_patch_source_code(version):
 
 def compile():
   with chdir(constants.RL_SOURCE_PATH):
-    system("mvn clean package -DskipTests")
+    system("mvn clean package -DskipTests -Dcheckstyle.skip")
   with chdir(constants.RL_API_PATH):
-    system("mvn clean package -DskipTests")
+    system("mvn clean package -DskipTests -Dcheckstyle.skip")
 
 def move_compiled_artifact_to_final_positions(version):
   jar_path = os.path.join(constants.RL_SOURCE_PATH, "runelite-client", "target", "client-{}-shaded.jar".format(version))
-  war_path = os.path.join(constants.RL_API_PATH, "http-service", "target", "runelite-1.0.0-SNAPSHOT.war")
+  war_path = os.path.join(constants.RL_API_PATH, "http-service", "target", "runelite-1.1.0.war")
 
   logging.info("moving jar to {}".format(constants.RL_JAR_PATH))
   shutil.copyfile(jar_path, constants.RL_JAR_PATH)
