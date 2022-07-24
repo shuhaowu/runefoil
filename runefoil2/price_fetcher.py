@@ -96,7 +96,7 @@ def fetch_latest_information_from_internet(runelite_version):
 
 
 def _prices_url(runelite_version):
-  return "https://api.runelite.net/runelite-{}/item/prices.json".format(runelite_version)
+  return "https://api.runelite.net/runelite-{}/item/prices.js".format(runelite_version)
 
 
 def _select_item(item_id, cursor):
