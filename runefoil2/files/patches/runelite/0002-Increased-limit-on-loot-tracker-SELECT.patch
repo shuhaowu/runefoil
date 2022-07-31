@@ -1,6 +1,6 @@
-From 9b3e84f3e6e7d51a28e53dd39b4897fd6767a5cd Mon Sep 17 00:00:00 2001
+From ca46a9ae23b203d1d65c84bbcb9b6cd844d6181c Mon Sep 17 00:00:00 2001
 From: Stephanie <eng.steph@gmail.com>
-Date: Tue, 26 Apr 2022 21:06:53 -0400
+Date: Sun, 31 Jul 2022 19:17:56 -0400
 Subject: [PATCH 2/2] Increased limit on loot tracker SELECT
 
 Also immediately submit loot on drop instead of waiting for 5 min.
@@ -9,10 +9,10 @@ Also immediately submit loot on drop instead of waiting for 5 min.
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-index 0ad15a249..7a5ccbfe4 100644
+index f883f721f..72d1cb40d 100644
 --- a/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
 +++ b/runelite-client/src/main/java/net/runelite/client/plugins/loottracker/LootTrackerPlugin.java
-@@ -602,7 +602,8 @@ public class LootTrackerPlugin extends Plugin
+@@ -598,7 +598,8 @@ public class LootTrackerPlugin extends Plugin
  		LootRecord lootRecord = new LootRecord(name, type, metadata, toGameItems(items), Instant.now(), getLootWorldId());
  		synchronized (queuedLoots)
  		{
