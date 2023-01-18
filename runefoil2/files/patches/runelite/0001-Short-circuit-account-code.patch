@@ -1,6 +1,6 @@
-From d681e2244877813c31af84034eae52c8376a33c2 Mon Sep 17 00:00:00 2001
+From 9008ae5e09e7bf85b4551a90ee18146eff2caff7 Mon Sep 17 00:00:00 2001
 From: Stephanie <eng.steph@gmail.com>
-Date: Sun, 31 Jul 2022 19:17:21 -0400
+Date: Wed, 18 Jan 2023 18:51:25 -0500
 Subject: [PATCH 1/2] Short circuit account code
 
 Since we're running a single player instance of RuneLite API server
@@ -14,7 +14,7 @@ login the player with a default account
  2 files changed, 13 insertions(+), 24 deletions(-)
 
 diff --git a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
-index c547325c6..b3b374739 100644
+index 9f6bdd781..38287fc15 100644
 --- a/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/account/SessionManager.java
 @@ -151,13 +151,8 @@ public class SessionManager
@@ -33,16 +33,17 @@ index c547325c6..b3b374739 100644
  
  		eventBus.post(new SessionOpen());
  	}
-@@ -184,40 +179,30 @@ public class SessionManager
- 		accountSession = null; // No more account
+@@ -172,7 +167,8 @@ public class SessionManager
+ 		log.debug("Logging out of account {}", accountSession.getUsername());
  
- 		// Restore config
+ 		// Restore config prior to deleting session so that pending config changes get saved correctly
 -		configManager.switchSession(null);
 +		// PATCHED: we don't want to switch the config as we only have one account and it is pointless.
 +		// configManager.switchSession(null);
  
- 		eventBus.post(new SessionClose());
- 	}
+ 		// Delete session
+ 		accountClient.setUuid(accountSession.getUuid());
+@@ -192,33 +188,22 @@ public class SessionManager
  
  	public void login()
  	{
@@ -82,7 +83,7 @@ index c547325c6..b3b374739 100644
  
  	public void logout()
 diff --git a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
-index 827129ef1..ee3a3e243 100644
+index 3b5fa512f..365b701e9 100644
 --- a/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 +++ b/runelite-client/src/main/java/net/runelite/client/config/ConfigManager.java
 @@ -163,6 +163,10 @@ public class ConfigManager
