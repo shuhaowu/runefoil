@@ -19,6 +19,9 @@ logging.basicConfig(format="[%(asctime)s][%(levelname)s] %(message)s", datefmt="
 # A bit hacky..
 runefoil2.utils.system("mkdir -p {}".format(runefoil2.constants.RL_BASEDIR))
 
+# Something with the Docker embedded DNS server is messing up the nftable rules, which is messing up with DNS resolution.
+runefoil2.utils.system("echo 'nameserver 1.1.1.1' > /etc/resolv.conf".format(runefoil2.constants.RL_BASEDIR))
+
 if os.path.exists(runefoil2.constants.LOCK_PATH):
   print("error: runelite is already running.")
   print("       will not start another instance due to security reasons.")

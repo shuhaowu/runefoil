@@ -24,6 +24,8 @@ services:
       - PULSE_COOKIE=/tmp/pulse.cookie
     devices:
       - /dev/dri
+    dns:
+      - 1.1.1.1
     init: true
     command: ["/usr/bin/supervisord"]
   mysql:
