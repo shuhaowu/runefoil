@@ -108,7 +108,7 @@ def compile():
 
 def move_compiled_artifact_to_final_positions(version):
   jar_path = os.path.join(constants.RL_SOURCE_PATH, "runelite-client", "target", "client-{}-shaded.jar".format(version))
-  war_path = os.path.join(constants.RL_API_PATH, "http-service", "target", "runelite-1.1.8.war")
+  war_path = os.path.join(constants.RL_API_PATH, "http-service", "target", "runelite-1.2.0-SNAPSHOT.war")
 
   logging.info("moving jar to {}".format(constants.RL_JAR_PATH))
   shutil.copyfile(jar_path, constants.RL_JAR_PATH)
