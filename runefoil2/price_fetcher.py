@@ -12,7 +12,7 @@ def _dbconn():
   global _conn
   if _conn is None:
     _conn = pymysql.connect(
-      "mysql",
+      "10.222.182.3",
       "runelite",
       "ironmanbtw",
       cursorclass=pymysql.cursors.DictCursor
