@@ -5,7 +5,7 @@
         maxActive="50" maxIdle="30" maxWait="10000"
         username="runelite" password="ironmanbtw"
         driverClassName="org.mariadb.jdbc.Driver"
-        url="jdbc:mysql://mysql:3306/runelite?relaxAutoCommit=true"
+        url="jdbc:mysql://10.222.182.3:3306/runelite?relaxAutoCommit=true"
         testOnBorrow="true"
         validationQuery="SELECT 1"
 />
@@ -14,7 +14,7 @@
         maxActive="50" maxIdle="30" maxWait="10000"
         username="runelite" password="ironmanbtw"
         driverClassName="org.mariadb.jdbc.Driver"
-        url="jdbc:mysql://mysql:3306/runelite-cache2?relaxAutoCommit=true"
+        url="jdbc:mysql://10.222.182.3:3306/runelite-cache2?relaxAutoCommit=true"
         testOnBorrow="true"
         validationQuery="SELECT 1"
 />
@@ -23,7 +23,7 @@
         maxActive="50" maxIdle="30" maxWait="10000"
         username="runelite" password="ironmanbtw"
         driverClassName="org.mariadb.jdbc.Driver"
-        url="jdbc:mysql://mysql:3306/runelite-tracker?relaxAutoCommit=true"
+        url="jdbc:mysql://10.222.182.3:3306/runelite-tracker?relaxAutoCommit=true"
         testOnBorrow="true"
         validationQuery="SELECT 1"
 />
@@ -34,7 +34,7 @@
           closeMethod="close"
           factory="com.mongodb.client.MongoClientFactory"
           singleton="true"
-          connectionString="mongodb://mongodb"/>
+          connectionString="mongodb://10.222.182.4"/>
 
 <Environment name="oauth.client-id" value="moo" type="java.lang.String"/>
 <Environment name="oauth.client-secret" value="moo" type="java.lang.String"/>

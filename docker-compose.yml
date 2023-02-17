@@ -24,6 +24,9 @@ services:
       - PULSE_COOKIE=/tmp/pulse.cookie
     devices:
       - /dev/dri
+    networks:
+      runenet:
+          ipv4_address: 10.222.182.2
     dns:
       - 1.1.1.1
     init: true
@@ -42,9 +45,21 @@ services:
       - runelite-mysql-data:/var/lib/mysql
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    networks:
+      runenet:
+          ipv4_address: 10.222.182.3
   mongodb:
+    networks:
+      runenet:
+          ipv4_address: 10.222.182.4
     image: mongo:3.6
-    restart: always
+    restart: always    
+networks:
+  runenet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.222.182.0/24
 volumes:
   # The MySQL data volume
   runelite-mysql-data:

@@ -47,7 +47,8 @@ table inet filter {{
 
     # TODO: this is probably not needed/not safe, as existing connections will thus be allowed.
     # ct state established,related accept
-
+    ip daddr 10.222.182.3 accept
+    ip daddr 10.222.182.4 accept
 {ipdaddr_rules}
 
     log prefix "rf-drop: " group 0 drop
@@ -196,6 +197,6 @@ def _allowed_hostnames_to_ips():
   hostnames.append("services.runescape.com")
   hostnames.append("secure.runescape.com")
   # The other two containers...
-  hostnames.append("mysql")
-  hostnames.append("mongodb")
+  hostnames.append("10.222.182.3")
+  hostnames.append("10.222.182.4")
   return _get_ips(hostnames)
